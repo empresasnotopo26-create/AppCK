@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../../store/AppContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { WordCloud } from '../../components/WordCloud';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -18,11 +17,12 @@ export const AdminPesquisa: React.FC = () => {
   }, {} as Record<string, number>);
 
   const revenueData = Object.entries(revenueCount).map(([name, value]) => ({ name, value }));
-  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+  const COLORS = ['bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500', 'bg-emerald-500'];
+
+  const totalPesquisas = pesquisas.length || 1;
 
   // Coletar textos para nuvem de palavras
   const desafiosWords = pesquisas.map(p => p.data.biggestChallenge).filter(Boolean);
-  const duvidasWords = pesquisas.map(p => p.data.aiDoubts).filter(Boolean);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -33,34 +33,26 @@ export const AdminPesquisa: React.FC = () => {
             <CardTitle className="text-slate-100">Faturamento das Empresas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full flex items-center justify-center">
-              {revenueData.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={revenueData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={5}
-                      dataKey="value"
-                      stroke="none"
-                    >
-                      {revenueData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', color: '#f8fafc' }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '12px', color: '#cbd5e1' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <p className="text-slate-500">Sem dados suficientes.</p>
-              )}
-            </div>
+            <div className="space-y-5 mt-4">
+               {revenueData.sort((a,b) => b.value - a.value).map((item, index) => {
+                 const percent = Math.round((item.value / totalPesquisas) * 100);
+                 const colorClass = COLORS[index % COLORS.length];
+                 return (
+                   <div key={item.name} className="space-y-2">
+                     <div className="flex justify-between text-sm">
+                       <span className="text-slate-300 font-medium">{item.name}</span>
+                       <span className="text-slate-400">{percent}% ({item.value})</span>
+                     </div>
+                     <div className="w-full bg-slate-800 rounded-full h-3 overflow-hidden">
+                       <div className={`${colorClass} h-full rounded-full transition-all duration-1000 ease-out`} style={{ width: `${percent}%` }}></div>
+                     </div>
+                   </div>
+                 );
+               })}
+               {revenueData.length === 0 && (
+                 <p className="text-slate-500 text-center py-8">Sem dados suficientes.</p>
+               )}
+             </div>
           </CardContent>
         </Card>
 

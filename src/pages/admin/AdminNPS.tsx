@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../../store/AppContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
 import { WordCloud } from '../../components/WordCloud';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -32,12 +31,13 @@ export const AdminNPS: React.FC = () => {
     count: npsResponses.filter(r => r.data.score === i).length
   }));
 
+  const maxCount = Math.max(...distribution.map(d => d.count), 1);
   const comments = npsResponses.map(r => r.data.suggestion).filter(Boolean);
 
   const getScoreColor = (score: number) => {
-    if (score >= 9) return '#10b981'; // green
-    if (score >= 7) return '#f59e0b'; // yellow
-    return '#ef4444'; // red
+    if (score >= 9) return 'bg-emerald-500'; 
+    if (score >= 7) return 'bg-amber-500';   
+    return 'bg-red-500';                     
   };
 
   return (
@@ -86,23 +86,20 @@ export const AdminNPS: React.FC = () => {
             <CardTitle className="text-slate-100">Distribuição de Notas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={distribution} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                  <XAxis dataKey="score" stroke="#94a3b8" tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#94a3b8" tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} allowDecimals={false} />
-                  <RechartsTooltip 
-                    cursor={{ fill: '#1e293b' }}
-                    contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', color: '#f8fafc' }}
-                  />
-                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                    {distribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={getScoreColor(Number(entry.score))} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="h-[250px] w-full flex items-end justify-between gap-1 sm:gap-2 pt-8 border-b border-slate-800/50 pb-2">
+               {distribution.map((entry, idx) => {
+                 const heightPercentage = (entry.count / maxCount) * 100;
+                 return (
+                   <div key={idx} className="flex flex-col items-center w-full gap-1 h-full justify-end group">
+                     <div className="text-slate-400 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">{entry.count}</div>
+                     <div 
+                       className={`w-full ${getScoreColor(Number(entry.score))} hover:opacity-80 rounded-t-sm transition-all duration-700 ease-out`} 
+                       style={{ height: `${heightPercentage}%`, minHeight: '2px' }}
+                     ></div>
+                     <div className="text-xs text-slate-500 mt-1 text-center font-medium">{entry.score}</div>
+                   </div>
+                 );
+               })}
             </div>
           </CardContent>
         </Card>

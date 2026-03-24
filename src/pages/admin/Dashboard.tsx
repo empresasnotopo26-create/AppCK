@@ -2,7 +2,6 @@ import React from 'react';
 import { useAppContext } from '../../store/AppContext';
 import { Users, FileText, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export const Dashboard: React.FC = () => {
   const { users, responses } = useAppContext();
@@ -23,6 +22,7 @@ export const Dashboard: React.FC = () => {
     { name: 'NPS', total: stats.nps },
   ];
 
+  const maxTotal = Math.max(...chartData.map(d => d.total), 1);
   const totalResponses = responses.length;
   const participationRate = totalUsers > 0 ? Math.round(((stats.pesquisa + stats.nps) / (totalUsers * 2)) * 100) : 0;
 
@@ -76,26 +76,26 @@ export const Dashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Gráfico */}
+      {/* Gráfico customizado usando Tailwind */}
       <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
           <CardTitle className="text-slate-100">Respostas por Etapa</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] w-full mt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                <XAxis dataKey="name" stroke="#94a3b8" tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis stroke="#94a3b8" tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <Tooltip 
-                  cursor={{ fill: '#1e293b' }}
-                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', color: '#f8fafc' }}
-                  itemStyle={{ color: '#60a5fa' }}
-                />
-                <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={60} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="h-[250px] w-full flex items-end justify-around gap-4 pt-8 border-b border-slate-800/50 pb-2">
+            {chartData.map((data, idx) => {
+              const heightPercentage = (data.total / maxTotal) * 100;
+              return (
+                <div key={idx} className="flex flex-col items-center w-full max-w-[80px] gap-2 h-full justify-end group">
+                  <div className="text-slate-300 font-bold opacity-50 group-hover:opacity-100 transition-opacity">{data.total}</div>
+                  <div 
+                    className="w-full bg-blue-500 hover:bg-blue-400 rounded-t-md transition-all duration-500 ease-out shadow-[0_0_15px_rgba(59,130,246,0.1)] group-hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]" 
+                    style={{ height: `${heightPercentage}%`, minHeight: '4px' }}
+                  ></div>
+                  <div className="text-xs text-slate-400 mt-2 text-center">{data.name}</div>
+                </div>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
