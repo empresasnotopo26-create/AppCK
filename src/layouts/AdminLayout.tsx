@@ -1,0 +1,74 @@
+import React from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { BarChart3, Users, MessageSquare, ListTodo, Coffee, Star, Gift, ChevronLeft } from 'lucide-react';
+
+export const AdminLayout: React.FC = () => {
+  const location = useLocation();
+
+  const navItems = [
+    { name: 'Dashboard', path: '/admin', icon: BarChart3 },
+    { name: 'Quiz', path: '/admin/quiz', icon: MessageSquare },
+    { name: 'Pesquisa', path: '/admin/pesquisa', icon: ListTodo },
+    { name: 'Pré-almoço', path: '/admin/pre-almoco', icon: Coffee },
+    { name: 'NPS', path: '/admin/nps', icon: Star },
+    { name: 'Sorteio', path: '/admin/sorteio', icon: Gift },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row text-slate-300">
+      
+      {/* Sidebar Admin */}
+      <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0">
+        <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950/50">
+          <div className="flex items-center gap-2">
+             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <span className="text-white font-bold text-lg">CK</span>
+            </div>
+            <span className="font-bold text-white tracking-wide">ADMIN</span>
+          </div>
+        </div>
+        
+        <nav className="flex-1 px-4 py-6 flex flex-col gap-2 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/admin');
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-blue-600/10 text-blue-400 font-medium shadow-[inset_2px_0_0_0_rgba(37,99,235,1)]'
+                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+              >
+                <Icon size={18} className={isActive ? 'text-blue-500' : 'text-slate-500'} />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+        
+        <div className="p-4 border-t border-slate-800">
+          <Link to="/" className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors">
+            <ChevronLeft size={16} />
+            Sair do Admin
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        <header className="h-16 flex items-center px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm z-10 flex-shrink-0">
+          <h1 className="text-xl font-semibold text-white">
+            {navItems.find(item => item.path === location.pathname)?.name || 'Visão Geral'}
+          </h1>
+        </header>
+        
+        <div className="flex-1 overflow-auto p-6 md:p-8">
+          <Outlet />
+        </div>
+      </main>
+    </div>
+  );
+};
