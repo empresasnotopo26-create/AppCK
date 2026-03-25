@@ -9,8 +9,8 @@ interface AppContextType extends AppState {
   logout: () => Promise<void>;
   saveResponse: (type: AppResponse['type'], data: any) => Promise<void>;
   updateUser: (userId: string, data: { isAdmin?: boolean, isActive?: boolean }) => Promise<void>;
-  addWinner: (user: User) => void;
-  clearWinners: () => void;
+  addWinner: (user: User) => Promise<void>;
+  clearWinners: () => Promise<void>;
 }
 
 const generateMockData = (): AppState => {
@@ -43,7 +43,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Busca inicial
   useEffect(() => {
     if (state.currentUser?.isAdmin) {
       fetchAllUsers();
@@ -53,10 +52,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [state.currentUser]);
 
-  // INSCRIÇÃO EM TEMPO REAL (REALTIME) PARA O ADMIN
+  // INSCRIÇÃO EM TEMPO REAL PARA ADMIN (Agora escuta INSERT e DELETE)
   useEffect(() => {
     if (state.currentUser?.isAdmin) {
-      // Ouve inserções na tabela 'responses'
       const channel = supabase
         .channel('realtime_responses')
         .on(
@@ -72,13 +70,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             } as AppResponse;
 
             setState(prev => {
-              // Evita duplicatas caso o próprio admin tenha respondido algo (o saveResponse já atualiza local)
               if (prev.responses.some(r => r.id === newResponse.id)) return prev;
               return { ...prev, responses: [...prev.responses, newResponse] };
             });
           }
         )
-        // Ouve atualizações em 'profiles' (novos usuários cadastrados)
+        .on(
+          'postgres_changes',
+          { event: 'DELETE', schema: 'public', table: 'responses' },
+          (payload) => {
+            setState(prev => ({
+              ...prev,
+              responses: prev.responses.filter(r => r.id !== payload.old.id)
+            }));
+          }
+        )
         .on(
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'profiles' },
@@ -245,7 +251,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } as AppResponse;
 
     setState(prev => {
-      const filteredResponses = prev.responses.filter(r => !(r.userId === prev.currentUser?.id && r.type === type));
+      // Para formulários normais, substituímos o antigo. Para ganhadores, nós acumulamos na lista.
+      const isSingleForm = type !== 'winner';
+      const filteredResponses = isSingleForm
+        ? prev.responses.filter(r => !(r.userId === prev.currentUser?.id && r.type === type))
+        : prev.responses;
+
       return {
         ...prev,
         responses: [...filteredResponses, newResponse],
@@ -253,16 +264,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
-  const addWinner = (user: User) => {
-    setState(prev => ({ ...prev, winners: [...prev.winners, user] }));
+  // Funções do Sorteio conectadas ao Supabase
+  const addWinner = async (user: User) => {
+    // Evita salvar duplicidade no banco se o admin clicar rápido demais
+    if (state.responses.some(r => r.type === 'winner' && r.data.winnerId === user.id)) return;
+    await saveResponse('winner', { winnerId: user.id });
   };
 
-  const clearWinners = () => {
-    setState(prev => ({ ...prev, winners: [] }));
+  const clearWinners = async () => {
+    const { error } = await supabase.from('responses').delete().eq('type', 'winner');
+    if (error) {
+      showError('Erro ao limpar histórico do sorteio.');
+      return;
+    }
+    showSuccess('Histórico de sorteio limpo!');
+    
+    // Atualiza interface instantaneamente
+    setState(prev => ({
+      ...prev,
+      responses: prev.responses.filter(r => r.type !== 'winner')
+    }));
   };
+
+  // Deriva os ganhadores a partir dos dados do banco de dados salvos no array responses
+  const derivedWinners = state.responses
+    .filter(r => r.type === 'winner')
+    .map(r => state.users.find(u => u.id === r.data.winnerId))
+    .filter((u): u is User => Boolean(u));
 
   return (
-    <AppContext.Provider value={{ ...state, registerUser, loginUser, logout, updateUser, saveResponse, addWinner, clearWinners }}>
+    <AppContext.Provider value={{ 
+      ...state, 
+      winners: derivedWinners, // Injeta os ganhadores extraídos do banco de dados!
+      registerUser, 
+      loginUser, 
+      logout, 
+      updateUser, 
+      saveResponse, 
+      addWinner, 
+      clearWinners 
+    }}>
       {children}
     </AppContext.Provider>
   );

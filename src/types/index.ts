@@ -8,7 +8,7 @@ export interface User {
   isActive?: boolean;
 }
 
-export type ResponseType = 'quiz' | 'pesquisa' | 'pre-almoco' | 'nps';
+export type ResponseType = 'quiz' | 'pesquisa' | 'pre-almoco' | 'nps' | 'winner';
 
 export interface BaseResponse {
   id: string;
@@ -54,7 +54,14 @@ export interface NPSResponse extends BaseResponse {
   };
 }
 
-export type AppResponse = QuizResponse | PesquisaResponse | PreAlmocoResponse | NPSResponse;
+export interface WinnerResponse extends BaseResponse {
+  type: 'winner';
+  data: {
+    winnerId: string;
+  };
+}
+
+export type AppResponse = QuizResponse | PesquisaResponse | PreAlmocoResponse | NPSResponse | WinnerResponse;
 
 export interface AppState {
   users: User[];
