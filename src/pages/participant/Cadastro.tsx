@@ -53,11 +53,12 @@ export const Cadastro: React.FC = () => {
         
         <div className="p-10 pb-6 text-center border-b border-slate-50 bg-white/50 backdrop-blur-sm">
           <div className="mx-auto mb-6 flex justify-center">
-            <div className="bg-slate-900 px-6 py-4 rounded-2xl shadow-xl shadow-slate-900/10">
+            {/* Contêiner Circular */}
+            <div className="w-24 h-24 bg-slate-900 rounded-full shadow-xl shadow-slate-900/10 flex items-center justify-center p-4 border-4 border-white">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
-                className="h-10 object-contain"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
