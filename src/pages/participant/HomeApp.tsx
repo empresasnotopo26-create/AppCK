@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
-import { ChevronRight, CheckCircle2, Clock, PlayCircle } from 'lucide-react';
+import { ChevronRight, CheckCircle2, Clock, PlayCircle, Trophy } from 'lucide-react';
 
 export const HomeApp: React.FC = () => {
   const { currentUser, responses } = useAppContext();
@@ -11,61 +11,81 @@ export const HomeApp: React.FC = () => {
   };
 
   const tasks = [
-    { title: 'Quiz Inicial', desc: 'Nivelamento rápido de conhecimento', path: '/app/quiz', type: 'quiz' },
-    { title: 'Pesquisa Principal', desc: 'Métricas e desafios da sua empresa', path: '/app/pesquisa', type: 'pesquisa' },
-    { title: 'Pesquisa Pré-almoço', desc: 'Avalie a manhã e deixe suas dúvidas', path: '/app/pre-almoco', type: 'pre-almoco' },
-    { title: 'Avaliação Final (NPS)', desc: 'Sua opinião geral sobre o evento', path: '/app/nps', type: 'nps' },
+    { title: 'Quiz Inicial', desc: 'Nivelamento rápido', path: '/app/quiz', type: 'quiz' },
+    { title: 'Pesquisa Principal', desc: 'Desafios da empresa', path: '/app/pesquisa', type: 'pesquisa' },
+    { title: 'Pesquisa da Manhã', path: '/app/pre-almoco', desc: 'Feedback pré-almoço', type: 'pre-almoco' },
+    { title: 'Avaliação Final', desc: 'NPS da Imersão', path: '/app/nps', type: 'nps' },
   ];
 
   const getFirstName = (name?: string) => name ? name.split(' ')[0] : '';
+  const completedTasks = tasks.filter(t => hasCompleted(t.type)).length;
+  const progress = Math.round((completedTasks / tasks.length) * 100);
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-3xl mx-auto">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -mr-10 -mt-10"></div>
-        <h1 className="text-3xl font-bold mb-2 relative z-10">Olá, {getFirstName(currentUser?.name)}! 👋</h1>
-        <p className="text-blue-100 text-lg relative z-10">Bem-vindo(a) ao hub do participante. Acompanhe suas atividades abaixo.</p>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
+      
+      {/* Banner Sólido e Elegante */}
+      <div className="bg-blue-600 rounded-3xl p-8 sm:p-10 text-white shadow-xl shadow-blue-600/20 relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="relative z-10 w-full sm:w-2/3">
+          <h1 className="text-3xl sm:text-4xl font-black mb-3 tracking-tight">Olá, {getFirstName(currentUser?.name)}! 👋</h1>
+          <p className="text-blue-100 text-lg font-medium">Sua jornada na Imersão de IA acontece aqui. Complete as etapas para maximizar seu aprendizado.</p>
+        </div>
+        
+        {/* Progresso Circular Simulado */}
+        <div className="relative z-10 bg-white/10 p-6 rounded-3xl backdrop-blur-md border border-white/20 text-center w-full sm:w-auto flex-shrink-0">
+          <div className="text-sm font-bold text-blue-100 uppercase tracking-widest mb-1">Progresso</div>
+          <div className="text-4xl font-black">{progress}%</div>
+          <div className="text-xs font-medium text-blue-200 mt-1">{completedTasks} de {tasks.length} concluídas</div>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold text-slate-800 px-1">Suas Atividades</h2>
-        <div className="grid gap-4">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Suas Atividades</h2>
+          {progress === 100 && <Trophy className="text-emerald-500 w-6 h-6" />}
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {tasks.map((task, idx) => {
             const completed = hasCompleted(task.type);
             return (
               <Link 
                 key={idx}
                 to={task.path}
-                className={`group flex flex-col sm:flex-row sm:items-center p-6 rounded-2xl border transition-all duration-300 ${
+                className={`group flex flex-col p-6 rounded-3xl border-2 transition-all duration-300 relative overflow-hidden ${
                   completed 
-                    ? 'bg-slate-50 border-slate-200' 
-                    : 'bg-white border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md'
+                    ? 'bg-slate-50 border-slate-100 hover:border-slate-200' 
+                    : 'bg-white border-slate-100 hover:border-blue-500 hover:shadow-[0_10px_40px_rgba(37,99,235,0.1)]'
                 }`}
               >
-                <div className="flex items-center flex-1">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0 transition-colors ${
+                <div className="flex justify-between items-start mb-6">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-colors ${
                     completed ? 'bg-emerald-100 text-emerald-600' : 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white'
                   }`}>
-                    {completed ? <CheckCircle2 className="w-6 h-6" /> : <PlayCircle className="w-6 h-6" />}
+                    {completed ? <CheckCircle2 className="w-7 h-7" /> : <PlayCircle className="w-7 h-7 ml-1" />}
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`font-bold text-lg mb-1 ${completed ? 'text-slate-500' : 'text-slate-800'}`}>
-                      {task.title}
-                    </h3>
-                    <p className={`text-sm ${completed ? 'text-slate-400' : 'text-slate-500'}`}>
-                      {task.desc}
-                    </p>
-                  </div>
+                  <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                    completed ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                  }`}>
+                    {completed ? 'Feito' : 'Pendente'}
+                  </span>
                 </div>
 
-                <div className="mt-4 sm:mt-0 flex items-center justify-between sm:justify-end pl-16 sm:pl-0">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mr-4 ${
-                    completed ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
-                  }`}>
-                    {completed ? 'Concluído' : 'Pendente'}
-                  </span>
-                  <ChevronRight className={`w-5 h-5 ${completed ? 'text-slate-300' : 'text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all'}`} />
+                <div>
+                  <h3 className={`font-black text-xl mb-2 tracking-tight ${completed ? 'text-slate-400' : 'text-slate-800'}`}>
+                    {task.title}
+                  </h3>
+                  <p className={`text-sm font-medium ${completed ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {task.desc}
+                  </p>
                 </div>
+
+                {/* Seta indicativa no canto inferior (apenas se não completou) */}
+                {!completed && (
+                  <div className="absolute bottom-6 right-6 w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center group-hover:bg-blue-50 group-hover:translate-x-1 transition-all">
+                     <ChevronRight className="w-5 h-5 text-blue-600" />
+                  </div>
+                )}
               </Link>
             );
           })}
