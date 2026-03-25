@@ -26,7 +26,7 @@ export const AdminLayout: React.FC = () => {
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
-                className="w-full h-full object-contain scale-[1.8]"
+                className="w-full h-full object-contain scale-[1.5]"
               />
             </div>
             <span className="font-bold text-white tracking-wide text-xs border-l border-slate-700 pl-3">
