@@ -22,11 +22,11 @@ export const AdminLayout: React.FC = () => {
       <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
         <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-950/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-950 rounded-full flex items-center justify-center border border-slate-800 shadow-sm">
+            <div className="w-10 h-10 bg-slate-950 rounded-full flex items-center justify-center border border-slate-800 shadow-sm overflow-hidden">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
-                className="w-[65%] h-[65%] object-contain"
+                className="w-full h-full object-contain scale-[1.8]"
               />
             </div>
             <span className="font-bold text-white tracking-wide text-xs border-l border-slate-700 pl-3">

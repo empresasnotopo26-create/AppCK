@@ -25,11 +25,11 @@ export const ParticipantLayout: React.FC = () => {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20 hidden md:block">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center shadow-md border border-slate-100">
+            <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center shadow-md border border-slate-100 overflow-hidden">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
-                className="w-[65%] h-[65%] object-contain"
+                className="w-full h-full object-contain scale-[1.8]"
               />
             </div>
             <span className="font-bold text-slate-900 text-lg tracking-tight border-l border-slate-200 pl-4">
@@ -56,11 +56,11 @@ export const ParticipantLayout: React.FC = () => {
       {/* Header Mobile Simplificado */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20 md:hidden px-4 h-16 flex items-center justify-between">
          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-slate-900 rounded-full flex items-center justify-center shadow-sm">
+            <div className="w-9 h-9 bg-slate-900 rounded-full flex items-center justify-center shadow-sm overflow-hidden">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
-                className="w-[65%] h-[65%] object-contain"
+                className="w-full h-full object-contain scale-[1.8]"
               />
             </div>
             <span className="font-bold text-slate-900 text-sm">Imersão IA</span>
