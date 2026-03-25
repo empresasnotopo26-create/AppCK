@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { showSuccess } from '../../utils/toast';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 
 export const NPS: React.FC = () => {
   const [score, setScore] = useState<number | null>(null);
   const [suggestion, setSuggestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alreadyResponded, setAlreadyResponded] = useState(false);
   
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
@@ -20,12 +21,13 @@ export const NPS: React.FC = () => {
     if (previous && previous.type === 'nps') {
       setScore(previous.data.score);
       setSuggestion(previous.data.suggestion);
+      setAlreadyResponded(true);
     }
   }, [responses, currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (score === null) return;
+    if (alreadyResponded || score === null) return;
     
     setIsSubmitting(true);
     try {
@@ -41,15 +43,17 @@ export const NPS: React.FC = () => {
     <div className="animate-in fade-in duration-500 max-w-3xl mx-auto pb-8">
       
       {/* Banner de Aviso Refinado */}
-      <div className="bg-orange-500/10 border-l-4 border-orange-500 p-5 rounded-2xl mb-12 flex items-start gap-4 shadow-sm">
-        <AlertCircle className="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5" />
-        <div>
-          <h3 className="font-bold text-orange-400 text-base">Pesquisa de Saída</h3>
-          <p className="text-orange-200/80 text-sm mt-1 leading-relaxed font-medium">
-            Responda esta pesquisa <strong>apenas ao final da imersão</strong>.
-          </p>
+      {!alreadyResponded && (
+        <div className="bg-orange-500/10 border-l-4 border-orange-500 p-5 rounded-2xl mb-12 flex items-start gap-4 shadow-sm">
+          <AlertCircle className="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-bold text-orange-400 text-base">Pesquisa de Saída</h3>
+            <p className="text-orange-200/80 text-sm mt-1 leading-relaxed font-medium">
+              Responda esta pesquisa <strong>apenas ao final da imersão</strong>.
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mb-12 text-center">
         <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Avaliação Final</h2>
@@ -70,13 +74,15 @@ export const NPS: React.FC = () => {
                 <button
                   key={num}
                   type="button"
-                  onClick={() => setScore(num)}
+                  onClick={() => !alreadyResponded && setScore(num)}
                   className={`w-12 h-14 sm:w-16 sm:h-20 flex items-center justify-center rounded-2xl sm:rounded-3xl text-xl sm:text-2xl font-black transition-all duration-300 border-2 ${
                     isSelected 
                       ? num >= 9 ? 'bg-emerald-500 text-slate-950 border-emerald-500 shadow-[0_10px_30px_rgba(16,185,129,0.5)] scale-110' 
                         : num >= 7 ? 'bg-orange-500 text-slate-950 border-orange-500 shadow-[0_10px_30px_rgba(249,115,22,0.5)] scale-110' 
                         : 'bg-red-500 text-slate-950 border-red-500 shadow-[0_10px_30px_rgba(239,68,68,0.5)] scale-110'
-                      : 'bg-slate-900 text-slate-500 border-slate-800 hover:border-slate-600 hover:text-white'
+                      : `bg-slate-900 text-slate-500 border-slate-800 ${
+                          alreadyResponded ? 'opacity-50 cursor-default' : 'hover:border-slate-600 hover:text-white'
+                        }`
                   }`}
                 >
                   {num}
@@ -94,20 +100,28 @@ export const NPS: React.FC = () => {
           <Label className="text-xl font-bold text-white block">Gostaria de deixar algum comentário, elogio ou sugestão?</Label>
           <Textarea 
             placeholder="Campo aberto (opcional)"
-            className="min-h-[160px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner"
+            className={`min-h-[160px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner ${alreadyResponded ? 'opacity-70 cursor-not-allowed' : ''}`}
             value={suggestion}
             onChange={(e) => setSuggestion(e.target.value)}
+            readOnly={alreadyResponded}
           />
         </div>
 
         <div className="pt-6">
-          <Button 
-            type="submit" 
-            disabled={score === null || isSubmitting}
-            className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
-          >
-            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Finalizar Imersão'}
-          </Button>
+          {alreadyResponded ? (
+            <div className="w-full h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center text-xl font-bold rounded-2xl">
+              <CheckCircle2 className="w-6 h-6 mr-2" />
+              Avaliação já enviada
+            </div>
+          ) : (
+            <Button 
+              type="submit" 
+              disabled={score === null || isSubmitting}
+              className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
+            >
+              {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Finalizar Imersão'}
+            </Button>
+          )}
         </div>
       </form>
     </div>
