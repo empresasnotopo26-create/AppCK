@@ -1,8 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, AppResponse, AppState } from '../types';
 
+interface AuthResult {
+  success: boolean;
+  error?: string;
+}
+
 interface AppContextType extends AppState {
-  registerUser: (name: string, email: string) => void;
+  registerUser: (name: string, email: string, password?: string) => AuthResult;
+  loginUser: (email: string, password?: string) => AuthResult;
   logout: () => void;
   saveResponse: (type: AppResponse['type'], data: any) => void;
   addWinner: (user: User) => void;
@@ -11,8 +17,8 @@ interface AppContextType extends AppState {
 
 const generateMockData = (): AppState => {
   const mockUsers: User[] = [
-    { id: '1', name: 'João Silva', email: 'joao@empresa.com', createdAt: new Date().toISOString() },
-    { id: '2', name: 'Maria Souza', email: 'maria@tech.com', createdAt: new Date().toISOString() },
+    { id: '1', name: 'João Silva', email: 'joao@empresa.com', password: '123', createdAt: new Date().toISOString() },
+    { id: '2', name: 'Maria Souza', email: 'maria@tech.com', password: '123', createdAt: new Date().toISOString() },
   ];
 
   const mockResponses: AppResponse[] = [
@@ -57,26 +63,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('app-ck-data', JSON.stringify(state));
   }, [state]);
 
-  const registerUser = (name: string, email: string) => {
-    // Verifica se já existe
+  const registerUser = (name: string, email: string, password?: string): AuthResult => {
     const existingUser = state.users.find(u => u.email.toLowerCase() === email.toLowerCase());
     
     if (existingUser) {
-      setState(prev => ({ ...prev, currentUser: existingUser }));
-      return;
+      return { success: false, error: 'Este e-mail já está cadastrado. Faça login.' };
     }
 
     const newUser: User = {
       id: Math.random().toString(36).substr(2, 9),
       name,
       email,
+      password,
       createdAt: new Date().toISOString(),
     };
+
     setState(prev => ({
       ...prev,
       users: [...prev.users, newUser],
       currentUser: newUser,
     }));
+
+    return { success: true };
+  };
+
+  const loginUser = (email: string, password?: string): AuthResult => {
+    const user = state.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    
+    if (!user) {
+      return { success: false, error: 'E-mail não encontrado.' };
+    }
+
+    // Se o usuário tem senha (usuários novos) ou estamos usando os mocks
+    if (user.password && user.password !== password) {
+      return { success: false, error: 'Senha incorreta.' };
+    }
+
+    setState(prev => ({ ...prev, currentUser: user }));
+    return { success: true };
   };
 
   const logout = () => {
@@ -112,7 +136,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <AppContext.Provider value={{ ...state, registerUser, logout, saveResponse, addWinner, clearWinners }}>
+    <AppContext.Provider value={{ ...state, registerUser, loginUser, logout, saveResponse, addWinner, clearWinners }}>
       {children}
     </AppContext.Provider>
   );
