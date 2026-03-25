@@ -5,6 +5,7 @@ export interface User {
   password?: string;
   createdAt: string;
   isAdmin?: boolean;
+  isActive?: boolean;
 }
 
 export type ResponseType = 'quiz' | 'pesquisa' | 'pre-almoco' | 'nps';
