@@ -25,7 +25,6 @@ const generateMockData = (): AppState => {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Limpamos o localStorage antigo para usar apenas os dados do banco
   const [state, setState] = useState<AppState>(generateMockData());
 
   useEffect(() => {
@@ -44,16 +43,67 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Busca todos os usuários e respostas se for admin
+  // Busca inicial
   useEffect(() => {
     if (state.currentUser?.isAdmin) {
       fetchAllUsers();
       fetchResponses(true, state.currentUser.id);
     } else if (state.currentUser) {
-      // Se não for admin, busca apenas as respostas do próprio usuário
       fetchResponses(false, state.currentUser.id);
     }
   }, [state.currentUser]);
+
+  // INSCRIÇÃO EM TEMPO REAL (REALTIME) PARA O ADMIN
+  useEffect(() => {
+    if (state.currentUser?.isAdmin) {
+      // Ouve inserções na tabela 'responses'
+      const channel = supabase
+        .channel('realtime_responses')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'responses' },
+          (payload) => {
+            const newResponse: AppResponse = {
+              id: payload.new.id,
+              userId: payload.new.user_id,
+              type: payload.new.type,
+              data: payload.new.data,
+              createdAt: payload.new.created_at,
+            } as AppResponse;
+
+            setState(prev => {
+              // Evita duplicatas caso o próprio admin tenha respondido algo (o saveResponse já atualiza local)
+              if (prev.responses.some(r => r.id === newResponse.id)) return prev;
+              return { ...prev, responses: [...prev.responses, newResponse] };
+            });
+          }
+        )
+        // Ouve atualizações em 'profiles' (novos usuários cadastrados)
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'profiles' },
+          (payload) => {
+            const newUser: User = {
+              id: payload.new.id,
+              name: payload.new.name || 'Sem Nome',
+              email: payload.new.email || '',
+              createdAt: payload.new.created_at,
+              isAdmin: payload.new.is_admin,
+              isActive: payload.new.is_active !== false,
+            };
+            setState(prev => {
+              if (prev.users.some(u => u.id === newUser.id)) return prev;
+              return { ...prev, users: [newUser, ...prev.users] };
+            });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [state.currentUser?.isAdmin]);
 
   const fetchAllUsers = async () => {
     const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
@@ -73,7 +123,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const fetchResponses = async (isAdmin: boolean, userId: string) => {
     let query = supabase.from('responses').select('*').order('created_at', { ascending: true });
     
-    // Se não for admin, filtra pelo ID do próprio usuário
     if (!isAdmin) {
       query = query.eq('user_id', userId);
     }
@@ -175,7 +224,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const saveResponse = async (type: AppResponse['type'], data: any) => {
     if (!state.currentUser) return;
     
-    // Inserindo no Supabase
     const { data: insertedData, error } = await supabase.from('responses').insert({
       user_id: state.currentUser.id,
       type: type,
@@ -196,7 +244,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       data: insertedData.data,
     } as AppResponse;
 
-    // Atualiza a interface
     setState(prev => {
       const filteredResponses = prev.responses.filter(r => !(r.userId === prev.currentUser?.id && r.type === type));
       return {
