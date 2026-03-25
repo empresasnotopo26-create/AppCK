@@ -6,37 +6,38 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
 
   const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: BarChart3 },
-    { name: 'Quiz', path: '/admin/quiz', icon: MessageSquare },
-    { name: 'Pesquisa', path: '/admin/pesquisa', icon: ListTodo },
+    { name: 'Visão Geral', path: '/admin', icon: BarChart3 },
+    { name: 'Participantes', path: '/admin/participantes', icon: Users },
+    { name: 'Quiz Inicial', path: '/admin/quiz', icon: MessageSquare },
+    { name: 'Pesquisa Principal', path: '/admin/pesquisa', icon: ListTodo },
     { name: 'Pré-almoço', path: '/admin/pre-almoco', icon: Coffee },
-    { name: 'NPS', path: '/admin/nps', icon: Star },
+    { name: 'NPS Final', path: '/admin/nps', icon: Star },
     { name: 'Sorteio', path: '/admin/sorteio', icon: Gift },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row text-slate-300">
+    <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row text-slate-300 font-sans">
       
       {/* Sidebar Admin */}
-      <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0">
+      <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
         <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950/50">
-          <div className="flex items-center gap-2">
-             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <span className="text-white font-bold text-lg">CK</span>
+          <div className="flex items-center gap-3">
+             <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <span className="text-white font-bold text-sm">CK</span>
             </div>
-            <span className="font-bold text-white tracking-wide">ADMIN</span>
+            <span className="font-bold text-white tracking-wide text-sm">APP ADMIN</span>
           </div>
         </div>
         
         <nav className="flex-1 px-4 py-6 flex flex-col gap-2 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/admin');
+            const isActive = location.pathname === item.path || (location.pathname.startsWith(item.path) && item.path !== '/admin' && item.path !== '/admin/participantes');
             const Icon = item.icon;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm ${
                   isActive
                     ? 'bg-blue-600/10 text-blue-400 font-medium shadow-[inset_2px_0_0_0_rgba(37,99,235,1)]'
                     : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
@@ -58,10 +59,10 @@ export const AdminLayout: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-950">
         <header className="h-16 flex items-center px-8 border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm z-10 flex-shrink-0">
-          <h1 className="text-xl font-semibold text-white">
-            {navItems.find(item => item.path === location.pathname)?.name || 'Visão Geral'}
+          <h1 className="text-lg font-semibold text-white">
+            {navItems.find(item => item.path === location.pathname)?.name || 'Dashboard'}
           </h1>
         </header>
         

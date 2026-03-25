@@ -18,16 +18,12 @@ import { NPS } from "./pages/participant/NPS";
 
 // Páginas Admin
 import { Dashboard } from "./pages/admin/Dashboard";
+import { AdminParticipantes } from "./pages/admin/AdminParticipantes";
+import { AdminQuiz } from "./pages/admin/AdminQuiz";
 import { AdminPesquisa } from "./pages/admin/AdminPesquisa";
+import { AdminPreAlmoco } from "./pages/admin/AdminPreAlmoco";
 import { AdminNPS } from "./pages/admin/AdminNPS";
 import { Sorteio } from "./pages/admin/Sorteio";
-
-const PlaceholderAdminView = ({ title }: { title: string }) => (
-  <div className="flex flex-col items-center justify-center h-[60vh] text-slate-500 border-2 border-dashed border-slate-800 rounded-xl">
-    <h2 className="text-xl mb-2">Módulo: {title}</h2>
-    <p className="text-sm">Desenvolvimento futuro ou integração de dados.</p>
-  </div>
-);
 
 const App = () => (
   <AppProvider>
@@ -52,9 +48,10 @@ const App = () => (
           {/* Área Admin */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="quiz" element={<PlaceholderAdminView title="Respostas do Quiz" />} />
+            <Route path="participantes" element={<AdminParticipantes />} />
+            <Route path="quiz" element={<AdminQuiz />} />
             <Route path="pesquisa" element={<AdminPesquisa />} />
-            <Route path="pre-almoco" element={<PlaceholderAdminView title="Feedback Pré-almoço" />} />
+            <Route path="pre-almoco" element={<AdminPreAlmoco />} />
             <Route path="nps" element={<AdminNPS />} />
             <Route path="sorteio" element={<Sorteio />} />
           </Route>
