@@ -74,7 +74,7 @@ export const Cadastro: React.FC = () => {
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-contain p-2"
+                className="w-full h-full object-contain scale-125"
               />
             </div>
           </div>
