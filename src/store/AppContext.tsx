@@ -40,13 +40,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     // 1. Verificar sessão ativa ao carregar
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) fetchProfile(session.user.id);
+      if (session) fetchProfile(session.user.id, session.user.email);
     });
 
     // 2. Escutar mudanças de autenticação (login, logout, etc)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        fetchProfile(session.user.id);
+        fetchProfile(session.user.id, session.user.email);
       } else {
         setState(prev => ({ ...prev, currentUser: null }));
       }
@@ -55,25 +55,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, email?: string) => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
     if (data) {
+      const isAdmin = email === 'admin@ianapratica.com';
       const user: User = {
         id: data.id,
-        name: data.name,
-        email: data.email,
-        createdAt: data.created_at
+        name: data.name || (isAdmin ? 'Administrador' : 'Usuário'),
+        email: data.email || email || '',
+        createdAt: data.created_at || new Date().toISOString(),
+        isAdmin: isAdmin
+      };
+      setState(prev => ({ ...prev, currentUser: user }));
+    } else if (email === 'admin@ianapratica.com') {
+      // Fallback pro admin caso não tenha profile ainda
+      const user: User = {
+        id: userId,
+        name: 'Administrador',
+        email: email,
+        createdAt: new Date().toISOString(),
+        isAdmin: true
       };
       setState(prev => ({ ...prev, currentUser: user }));
     }
   };
 
   const registerUser = async (name: string, email: string, password?: string): Promise<AuthResult> => {
+    const isAdmin = email === 'admin@ianapratica.com';
     const { data, error } = await supabase.auth.signUp({
       email,
-      password: password || '12345678', // Senha padrão se não for fornecida (exigência do Supabase)
+      password: password || '12345678', // Senha padrão se não for fornecida
       options: {
-        data: { name } // Passa o nome para os metadados
+        data: { name }
       }
     });
 
@@ -81,17 +94,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (error.message.includes('already registered')) return { success: false, error: 'E-mail já cadastrado.' };
       return { success: false, error: error.message };
     }
-    return { success: true };
+    return { success: true, isAdmin };
   };
 
   const loginUser = async (email: string, password?: string): Promise<AuthResult> => {
+    const isAdmin = email === 'admin@ianapratica.com';
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password: password || '12345678'
     });
 
     if (error) return { success: false, error: 'Credenciais inválidas.' };
-    return { success: true };
+    return { success: true, isAdmin };
   };
 
   const logout = async () => {

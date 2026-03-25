@@ -4,6 +4,7 @@ export interface User {
   email: string;
   password?: string;
   createdAt: string;
+  isAdmin?: boolean;
 }
 
 export type ResponseType = 'quiz' | 'pesquisa' | 'pre-almoco' | 'nps';
@@ -64,4 +65,5 @@ export interface AppState {
 export interface AuthResult {
   success: boolean;
   error?: string;
+  isAdmin?: boolean;
 }

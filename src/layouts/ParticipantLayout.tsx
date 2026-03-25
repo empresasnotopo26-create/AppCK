@@ -11,6 +11,11 @@ export const ParticipantLayout: React.FC = () => {
     return <Navigate to="/cadastro" />;
   }
 
+  // Proteção: Se for admin, volta pro painel de admin
+  if (currentUser.isAdmin) {
+    return <Navigate to="/admin" />;
+  }
+
   const navItems = [
     { name: 'Início', path: '/app', icon: Home },
     { name: 'Quiz', path: '/app/quiz', icon: MessageSquare },

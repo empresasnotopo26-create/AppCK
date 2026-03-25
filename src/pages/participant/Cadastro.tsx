@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
 import { Button } from '@/components/ui/button';
@@ -14,8 +14,16 @@ export const Cadastro: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { registerUser, loginUser } = useAppContext();
+  const { registerUser, loginUser, currentUser } = useAppContext();
   const navigate = useNavigate();
+
+  // Redireciona caso já esteja logado e tente acessar /cadastro
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.isAdmin) navigate('/admin');
+      else navigate('/app');
+    }
+  }, [currentUser, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +36,8 @@ export const Cadastro: React.FC = () => {
         const result = await loginUser(email, password);
         if (result.success) {
           showSuccess('Login realizado com sucesso!');
-          navigate('/app');
+          if (result.isAdmin) navigate('/admin');
+          else navigate('/app');
         } else {
           showError(result.error || 'Erro ao fazer login.');
         }
@@ -38,7 +47,8 @@ export const Cadastro: React.FC = () => {
         const result = await registerUser(name, email, password);
         if (result.success) {
           showSuccess('Cadastro realizado com sucesso!');
-          navigate('/app');
+          if (result.isAdmin) navigate('/admin');
+          else navigate('/app');
         } else {
           showError(result.error || 'Erro ao realizar cadastro.');
         }

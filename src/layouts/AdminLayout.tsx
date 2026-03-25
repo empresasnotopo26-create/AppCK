@@ -1,9 +1,20 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
-import { BarChart3, Users, MessageSquare, ListTodo, Coffee, Star, Gift, ChevronLeft } from 'lucide-react';
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
+import { useAppContext } from '../store/AppContext';
+import { BarChart3, Users, MessageSquare, ListTodo, Coffee, Star, Gift, ChevronLeft, LogOut } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
+  const { currentUser, logout } = useAppContext();
   const location = useLocation();
+
+  if (!currentUser) {
+    return <Navigate to="/cadastro" />;
+  }
+
+  // Proteção: Se não for admin, volta pro app
+  if (!currentUser.isAdmin) {
+    return <Navigate to="/app" />;
+  }
 
   const navItems = [
     { name: 'Visão Geral', path: '/admin', icon: BarChart3 },
@@ -57,10 +68,10 @@ export const AdminLayout: React.FC = () => {
         </nav>
         
         <div className="p-4 border-t border-slate-800">
-          <Link to="/" className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors">
-            <ChevronLeft size={16} />
+          <button onClick={logout} className="flex items-center gap-2 text-sm text-slate-500 hover:text-red-400 transition-colors w-full">
+            <LogOut size={16} />
             Sair do Admin
-          </Link>
+          </button>
         </div>
       </aside>
 
