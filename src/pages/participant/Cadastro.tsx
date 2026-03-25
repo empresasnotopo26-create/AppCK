@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, LogIn, UserPlus, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '../../utils/toast';
-import logoImg from '@/assets/logo.png';
 
 export const Cadastro: React.FC = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -71,11 +70,11 @@ export const Cadastro: React.FC = () => {
         <div className="p-10 pb-6 text-center border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
           <div className="mx-auto mb-6 flex justify-center">
             {/* Logo Wrapper Redondo */}
-            <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-950 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.3)]">
+            <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.3)]">
               <img 
-                src={logoImg} 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain p-2"
               />
             </div>
           </div>

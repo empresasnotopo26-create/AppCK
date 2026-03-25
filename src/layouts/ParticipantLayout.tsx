@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
 import { LogOut, Home, ClipboardList, Coffee, Star, MessageSquare } from 'lucide-react';
-import logoImg from '@/assets/logo.png';
 
 export const ParticipantLayout: React.FC = () => {
   const { currentUser, logout } = useAppContext();
@@ -33,9 +32,9 @@ export const ParticipantLayout: React.FC = () => {
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center shadow-[0_0_10px_rgba(249,115,22,0.2)]">
               <img 
-                src={logoImg} 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain p-1"
               />
             </div>
             <span className="font-bold text-white text-lg tracking-tight border-l border-slate-700 pl-4">
@@ -64,9 +63,9 @@ export const ParticipantLayout: React.FC = () => {
          <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
               <img 
-                src={logoImg} 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain p-1"
               />
             </div>
             <span className="font-bold text-white text-sm">Imersão IA</span>
