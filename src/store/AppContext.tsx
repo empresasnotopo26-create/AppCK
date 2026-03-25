@@ -52,7 +52,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [state.currentUser]);
 
-  // INSCRIÇÃO EM TEMPO REAL PARA ADMIN (Agora escuta INSERT e DELETE)
+  // INSCRIÇÃO EM TEMPO REAL PARA ADMIN (Escuta INSERT e DELETE)
   useEffect(() => {
     if (state.currentUser?.isAdmin) {
       const channel = supabase
@@ -113,6 +113,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const fetchAllUsers = async () => {
     const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    if (error) {
+      console.error("Erro ao buscar usuários:", error);
+      return;
+    }
     if (data) {
       const mappedUsers: User[] = data.map((d: any) => ({
         id: d.id,
@@ -134,6 +138,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     
     const { data, error } = await query;
+    if (error) {
+      console.error("Erro ao buscar respostas:", error);
+      return;
+    }
+
     if (data) {
       const mappedResponses = data.map((r: any) => ({
         id: r.id,
@@ -149,6 +158,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const fetchProfile = async (userId: string, email?: string) => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+    
     if (data) {
       if (data.is_active === false) {
         showError('Sua conta foi inativada pelo administrador.');
@@ -157,7 +167,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         return;
       }
 
-      const isAdmin = data.is_admin || email === 'admin@ianapratica.com';
+      let isAdmin = data.is_admin;
+
+      // CORREÇÃO CRÍTICA: Força a flag de admin no banco se for o e-mail oficial
+      // Isso é necessário para a política do banco liberar acesso as respostas.
+      if (email === 'admin@ianapratica.com' && !isAdmin) {
+        const { error: updateError } = await supabase.from('profiles').update({ is_admin: true }).eq('id', userId);
+        if (!updateError) {
+          isAdmin = true;
+        } else {
+          console.error("Erro ao setar permissão de admin no banco:", updateError);
+        }
+      }
+
+      // Fallback de segurança na interface
+      if (email === 'admin@ianapratica.com') {
+        isAdmin = true;
+      }
+
       const user: User = {
         id: data.id,
         name: data.name || (isAdmin ? 'Administrador' : 'Usuário'),
@@ -166,8 +193,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isAdmin: isAdmin,
         isActive: true
       };
+      
       setState(prev => ({ ...prev, currentUser: user }));
     } else if (email === 'admin@ianapratica.com') {
+      // Caso a trigger do banco falhe em criar o profile
       const user: User = {
         id: userId,
         name: 'Administrador',
@@ -264,9 +293,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
-  // Funções do Sorteio conectadas ao Supabase
   const addWinner = async (user: User) => {
-    // Evita salvar duplicidade no banco se o admin clicar rápido demais
     if (state.responses.some(r => r.type === 'winner' && r.data.winnerId === user.id)) return;
     await saveResponse('winner', { winnerId: user.id });
   };
@@ -279,14 +306,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     showSuccess('Histórico de sorteio limpo!');
     
-    // Atualiza interface instantaneamente
     setState(prev => ({
       ...prev,
       responses: prev.responses.filter(r => r.type !== 'winner')
     }));
   };
 
-  // Deriva os ganhadores a partir dos dados do banco de dados salvos no array responses
   const derivedWinners = state.responses
     .filter(r => r.type === 'winner')
     .map(r => state.users.find(u => u.id === r.data.winnerId))
@@ -295,7 +320,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider value={{ 
       ...state, 
-      winners: derivedWinners, // Injeta os ganhadores extraídos do banco de dados!
+      winners: derivedWinners,
       registerUser, 
       loginUser, 
       logout, 
