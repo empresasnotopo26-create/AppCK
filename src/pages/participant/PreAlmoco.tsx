@@ -4,6 +4,7 @@ import { useAppContext } from '../../store/AppContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { showSuccess } from '../../utils/toast';
+import { Loader2 } from 'lucide-react';
 
 export const PreAlmoco: React.FC = () => {
   const [scores, setScores] = useState({
@@ -12,6 +13,7 @@ export const PreAlmoco: React.FC = () => {
     salesPredictability: null as number | null,
     customerEvaluation: null as number | null,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
@@ -28,13 +30,18 @@ export const PreAlmoco: React.FC = () => {
     }
   }, [responses, currentUser]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isComplete) return;
     
-    saveResponse('pre-almoco', scores);
-    showSuccess('Feedback enviado. Bom apetite!');
-    navigate('/app');
+    setIsSubmitting(true);
+    try {
+      await saveResponse('pre-almoco', scores);
+      showSuccess('Feedback enviado. Bom apetite!');
+      navigate('/app');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const setScore = (field: keyof typeof scores, value: number) => {
@@ -94,10 +101,10 @@ export const PreAlmoco: React.FC = () => {
         <div className="pt-6 border-t border-slate-800">
           <Button 
             type="submit" 
-            disabled={!isComplete}
+            disabled={!isComplete || isSubmitting}
             className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
           >
-            Enviar Avaliação
+            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Enviar Avaliação'}
           </Button>
         </div>
       </form>

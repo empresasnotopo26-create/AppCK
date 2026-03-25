@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
 import { Button } from '@/components/ui/button';
 import { showSuccess } from '../../utils/toast';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 
 export const Quiz: React.FC = () => {
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '' });
   const [alreadyResponded, setAlreadyResponded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
@@ -21,17 +22,22 @@ export const Quiz: React.FC = () => {
   }, [responses, currentUser]);
 
   const handleSelect = (question: string, value: string) => {
-    if (alreadyResponded) return; // Bloqueia a seleção se já respondeu
+    if (alreadyResponded) return;
     setAnswers(prev => ({ ...prev, [question]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (alreadyResponded || !answers.q1 || !answers.q2 || !answers.q3 || !answers.q4) return;
     
-    saveResponse('quiz', answers);
-    showSuccess('Quiz concluído com sucesso!');
-    navigate('/app');
+    setIsSubmitting(true);
+    try {
+      await saveResponse('quiz', answers);
+      showSuccess('Quiz concluído com sucesso!');
+      navigate('/app');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const questions = [
@@ -127,10 +133,10 @@ export const Quiz: React.FC = () => {
           ) : (
             <Button 
               type="submit" 
-              disabled={!isComplete}
+              disabled={!isComplete || isSubmitting}
               className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg disabled:opacity-50 disabled:shadow-none hover:shadow-[0_0_30px_rgba(249,115,22,0.4)]"
             >
-              {isComplete ? 'Concluir Quiz' : 'Responda tudo para continuar'}
+              {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (isComplete ? 'Concluir Quiz' : 'Responda tudo para continuar')}
             </Button>
           )}
         </div>

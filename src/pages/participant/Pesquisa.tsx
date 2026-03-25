@@ -5,11 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { showSuccess } from '../../utils/toast';
+import { Loader2 } from 'lucide-react';
 
 export const Pesquisa: React.FC = () => {
   const [revenue, setRevenue] = useState('');
   const [biggestChallenge, setBiggestChallenge] = useState('');
   const [aiDoubts, setAiDoubts] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
 
@@ -22,13 +25,18 @@ export const Pesquisa: React.FC = () => {
     }
   }, [responses, currentUser]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!revenue || !biggestChallenge || !aiDoubts) return;
     
-    saveResponse('pesquisa', { revenue, biggestChallenge, aiDoubts });
-    showSuccess('Pesquisa enviada com sucesso!');
-    navigate('/app');
+    setIsSubmitting(true);
+    try {
+      await saveResponse('pesquisa', { revenue, biggestChallenge, aiDoubts });
+      showSuccess('Pesquisa enviada com sucesso!');
+      navigate('/app');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const revenueOptions = [
@@ -103,10 +111,10 @@ export const Pesquisa: React.FC = () => {
         <div className="pt-6">
           <Button 
             type="submit" 
-            disabled={!isComplete}
+            disabled={!isComplete || isSubmitting}
             className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
           >
-            Enviar Pesquisa
+            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Enviar Pesquisa'}
           </Button>
         </div>
       </form>

@@ -7,7 +7,7 @@ interface AppContextType extends AppState {
   registerUser: (name: string, email: string, password?: string) => Promise<AuthResult>;
   loginUser: (email: string, password?: string) => Promise<AuthResult>;
   logout: () => Promise<void>;
-  saveResponse: (type: AppResponse['type'], data: any) => void;
+  saveResponse: (type: AppResponse['type'], data: any) => Promise<void>;
   updateUser: (userId: string, data: { isAdmin?: boolean, isActive?: boolean }) => Promise<void>;
   addWinner: (user: User) => void;
   clearWinners: () => void;
@@ -25,18 +25,8 @@ const generateMockData = (): AppState => {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<AppState>(() => {
-    const saved = localStorage.getItem('app-ck-data');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return { ...parsed, currentUser: null, users: [] };
-      } catch (e) {
-        return generateMockData();
-      }
-    }
-    return generateMockData();
-  });
+  // Limpamos o localStorage antigo para usar apenas os dados do banco
+  const [state, setState] = useState<AppState>(generateMockData());
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -47,19 +37,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (session) {
         fetchProfile(session.user.id, session.user.email);
       } else {
-        setState(prev => ({ ...prev, currentUser: null }));
+        setState(generateMockData());
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  // Busca todos os usuários se o usuário atual for admin
+  // Busca todos os usuários e respostas se for admin
   useEffect(() => {
     if (state.currentUser?.isAdmin) {
       fetchAllUsers();
+      fetchResponses(true, state.currentUser.id);
+    } else if (state.currentUser) {
+      // Se não for admin, busca apenas as respostas do próprio usuário
+      fetchResponses(false, state.currentUser.id);
     }
-  }, [state.currentUser?.isAdmin]);
+  }, [state.currentUser]);
 
   const fetchAllUsers = async () => {
     const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
@@ -70,16 +64,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         email: d.email || '',
         createdAt: d.created_at || new Date().toISOString(),
         isAdmin: d.is_admin || d.email === 'admin@ianapratica.com',
-        isActive: d.is_active !== false // se for nulo, é true
+        isActive: d.is_active !== false
       }));
       setState(prev => ({ ...prev, users: mappedUsers }));
+    }
+  };
+
+  const fetchResponses = async (isAdmin: boolean, userId: string) => {
+    let query = supabase.from('responses').select('*').order('created_at', { ascending: true });
+    
+    // Se não for admin, filtra pelo ID do próprio usuário
+    if (!isAdmin) {
+      query = query.eq('user_id', userId);
+    }
+    
+    const { data, error } = await query;
+    if (data) {
+      const mappedResponses = data.map((r: any) => ({
+        id: r.id,
+        userId: r.user_id,
+        type: r.type,
+        data: r.data,
+        createdAt: r.created_at
+      })) as AppResponse[];
+      
+      setState(prev => ({ ...prev, responses: mappedResponses }));
     }
   };
 
   const fetchProfile = async (userId: string, email?: string) => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
     if (data) {
-      // Bloqueia acesso de usuário inativado
       if (data.is_active === false) {
         showError('Sua conta foi inativada pelo administrador.');
         await supabase.auth.signOut();
@@ -140,53 +155,54 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await supabase.auth.signOut();
   };
 
-  // Atualiza um usuário via painel Admin
   const updateUser = async (userId: string, data: { isAdmin?: boolean, isActive?: boolean }) => {
     const updates: any = {};
     if (data.isAdmin !== undefined) updates.is_admin = data.isAdmin;
     if (data.isActive !== undefined) updates.is_active = data.isActive;
 
     const { error } = await supabase.from('profiles').update(updates).eq('id', userId);
-    
     if (error) {
-      showError('Erro ao atualizar usuário. Verifique as permissões.');
-      console.error(error);
+      showError('Erro ao atualizar usuário.');
       return;
     }
-    
     showSuccess('Status atualizado com sucesso!');
-    
-    // Atualiza a lista localmente para resposta rápida na UI
     setState(prev => ({
       ...prev,
-      users: prev.users.map(u => 
-        u.id === userId 
-          ? { ...u, isAdmin: data.isAdmin !== undefined ? data.isAdmin : u.isAdmin, isActive: data.isActive !== undefined ? data.isActive : u.isActive } 
-          : u
-      )
+      users: prev.users.map(u => u.id === userId ? { ...u, ...data } : u)
     }));
   };
 
-  // Mantido local por enquanto (Formulários)
-  const saveResponse = (type: AppResponse['type'], data: any) => {
+  const saveResponse = async (type: AppResponse['type'], data: any) => {
     if (!state.currentUser) return;
     
+    // Inserindo no Supabase
+    const { data: insertedData, error } = await supabase.from('responses').insert({
+      user_id: state.currentUser.id,
+      type: type,
+      data: data
+    }).select().single();
+
+    if (error) {
+      showError('Falha ao salvar a resposta.');
+      console.error(error);
+      return;
+    }
+
     const newResponse: AppResponse = {
-      id: Math.random().toString(36).substr(2, 9),
-      userId: state.currentUser.id,
-      type,
-      createdAt: new Date().toISOString(),
-      data,
+      id: insertedData.id,
+      userId: insertedData.user_id,
+      type: insertedData.type,
+      createdAt: insertedData.created_at,
+      data: insertedData.data,
     } as AppResponse;
 
+    // Atualiza a interface
     setState(prev => {
       const filteredResponses = prev.responses.filter(r => !(r.userId === prev.currentUser?.id && r.type === type));
-      const newState = {
+      return {
         ...prev,
         responses: [...filteredResponses, newResponse],
       };
-      localStorage.setItem('app-ck-data', JSON.stringify(newState));
-      return newState;
     });
   };
 

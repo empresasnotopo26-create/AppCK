@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { showSuccess } from '../../utils/toast';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 export const NPS: React.FC = () => {
   const [score, setScore] = useState<number | null>(null);
   const [suggestion, setSuggestion] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
@@ -22,13 +23,18 @@ export const NPS: React.FC = () => {
     }
   }, [responses, currentUser]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (score === null) return;
     
-    saveResponse('nps', { score, suggestion });
-    showSuccess('Avaliação enviada! Muito obrigado.');
-    navigate('/app');
+    setIsSubmitting(true);
+    try {
+      await saveResponse('nps', { score, suggestion });
+      showSuccess('Avaliação enviada! Muito obrigado.');
+      navigate('/app');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -97,10 +103,10 @@ export const NPS: React.FC = () => {
         <div className="pt-6">
           <Button 
             type="submit" 
-            disabled={score === null}
+            disabled={score === null || isSubmitting}
             className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
           >
-            Finalizar Imersão
+            {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Finalizar Imersão'}
           </Button>
         </div>
       </form>
