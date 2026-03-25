@@ -48,7 +48,12 @@ export const PreAlmoco: React.FC = () => {
     setScores(prev => ({ ...prev, [field]: value }));
   };
 
-  const isComplete = scores.dataClarity && scores.processExecution && scores.salesPredictability && scores.customerEvaluation;
+  // Precisamos verificar se não é nulo, pois se for 0 ele cairia como "falso" no javascript
+  const isComplete = 
+    scores.dataClarity !== null && 
+    scores.processExecution !== null && 
+    scores.salesPredictability !== null && 
+    scores.customerEvaluation !== null;
 
   const questions = [
     { id: 'dataClarity' as const, title: 'Você tem clareza dos seus dados?' },
@@ -61,7 +66,7 @@ export const PreAlmoco: React.FC = () => {
     <div className="animate-in fade-in duration-500 max-w-2xl mx-auto pb-8">
       <div className="mb-10 text-center sm:text-left">
         <h2 className="text-3xl font-black text-white tracking-tight">Diagnóstico: Manhã</h2>
-        <p className="text-slate-400 mt-2 text-lg font-medium">Avalie os pilares do seu negócio de 1 (Muito Ruim) a 5 (Muito Bom).</p>
+        <p className="text-slate-400 mt-2 text-lg font-medium">Avalie os pilares do seu negócio de 0 (Muito Ruim) a 5 (Muito Bom).</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-12">
@@ -72,17 +77,17 @@ export const PreAlmoco: React.FC = () => {
               {q.title}
             </Label>
             
-            <div className="flex justify-between items-center gap-2 sm:gap-4 mt-4 bg-slate-950 p-3 sm:p-4 rounded-[2rem] border border-slate-800">
-              {[1, 2, 3, 4, 5].map((num) => {
+            <div className="flex justify-between items-center gap-1 sm:gap-3 mt-4 bg-slate-950 p-2 sm:p-4 rounded-[2rem] border border-slate-800">
+              {[0, 1, 2, 3, 4, 5].map((num) => {
                 const isSelected = scores[q.id] === num;
                 return (
                   <button
                     key={num}
                     type="button"
                     onClick={() => setScore(q.id, num)}
-                    className={`flex-1 h-16 sm:h-20 rounded-2xl sm:rounded-3xl text-xl sm:text-2xl font-black transition-all duration-300 ${
+                    className={`flex-1 h-14 sm:h-16 rounded-xl sm:rounded-2xl text-lg sm:text-xl font-black transition-all duration-300 ${
                       isSelected 
-                        ? 'bg-orange-500 text-slate-950 shadow-[0_0_25px_rgba(249,115,22,0.5)] scale-110 border-orange-500' 
+                        ? 'bg-orange-500 text-slate-950 shadow-[0_0_25px_rgba(249,115,22,0.5)] scale-110 border-orange-500 z-10' 
                         : 'bg-slate-900 text-slate-500 border-2 border-slate-800 hover:border-orange-500/50 hover:text-orange-500'
                     }`}
                   >

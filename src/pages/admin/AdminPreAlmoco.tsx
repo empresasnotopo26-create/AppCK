@@ -8,19 +8,20 @@ export const AdminPreAlmoco: React.FC = () => {
   const { users, responses } = useAppContext();
   
   const preAlmocoResp = responses.filter(r => r.type === 'pre-almoco');
-  const total = preAlmocoResp.length || 1;
+  const hasData = preAlmocoResp.length > 0;
+  const total = hasData ? preAlmocoResp.length : 1;
 
-  // Calculando médias
-  const avgDataClarity = (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.dataClarity, 0) / total).toFixed(1);
-  const avgProcessExecution = (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.processExecution, 0) / total).toFixed(1);
-  const avgSalesPredictability = (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.salesPredictability, 0) / total).toFixed(1);
-  const avgCustomerEvaluation = (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.customerEvaluation, 0) / total).toFixed(1);
+  // Calculando médias. Usando hasData para não exibir 0 se ninguém respondeu nada
+  const avgDataClarity = hasData ? (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.dataClarity, 0) / total).toFixed(1) : '-';
+  const avgProcessExecution = hasData ? (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.processExecution, 0) / total).toFixed(1) : '-';
+  const avgSalesPredictability = hasData ? (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.salesPredictability, 0) / total).toFixed(1) : '-';
+  const avgCustomerEvaluation = hasData ? (preAlmocoResp.reduce((acc, curr: any) => acc + curr.data.customerEvaluation, 0) / total).toFixed(1) : '-';
 
   const ScoreBadge = ({ score }: { score: number }) => {
     let colorClass = 'bg-slate-800 text-slate-400';
     if (score >= 4) colorClass = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
     else if (score === 3) colorClass = 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-    else if (score > 0) colorClass = 'bg-red-500/20 text-red-400 border-red-500/30';
+    else if (score >= 0) colorClass = 'bg-red-500/20 text-red-400 border-red-500/30';
 
     return (
       <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm border ${colorClass}`}>
@@ -41,7 +42,7 @@ export const AdminPreAlmoco: React.FC = () => {
             </div>
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Dados</p>
-              <h3 className="text-4xl font-bold text-white mt-1">{avgDataClarity !== '0.0' ? avgDataClarity : '-'}</h3>
+              <h3 className="text-4xl font-bold text-white mt-1">{avgDataClarity}</h3>
             </div>
           </CardContent>
         </Card>
@@ -53,7 +54,7 @@ export const AdminPreAlmoco: React.FC = () => {
             </div>
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Processos</p>
-              <h3 className="text-4xl font-bold text-white mt-1">{avgProcessExecution !== '0.0' ? avgProcessExecution : '-'}</h3>
+              <h3 className="text-4xl font-bold text-white mt-1">{avgProcessExecution}</h3>
             </div>
           </CardContent>
         </Card>
@@ -65,7 +66,7 @@ export const AdminPreAlmoco: React.FC = () => {
             </div>
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Vendas</p>
-              <h3 className="text-4xl font-bold text-white mt-1">{avgSalesPredictability !== '0.0' ? avgSalesPredictability : '-'}</h3>
+              <h3 className="text-4xl font-bold text-white mt-1">{avgSalesPredictability}</h3>
             </div>
           </CardContent>
         </Card>
@@ -77,7 +78,7 @@ export const AdminPreAlmoco: React.FC = () => {
             </div>
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">Clientes</p>
-              <h3 className="text-4xl font-bold text-white mt-1">{avgCustomerEvaluation !== '0.0' ? avgCustomerEvaluation : '-'}</h3>
+              <h3 className="text-4xl font-bold text-white mt-1">{avgCustomerEvaluation}</h3>
             </div>
           </CardContent>
         </Card>
