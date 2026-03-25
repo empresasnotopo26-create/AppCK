@@ -115,6 +115,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
     if (error) {
       console.error("Erro ao buscar usuários:", error);
+      showError("Bloqueio no Banco: Não foi possível carregar os usuários.");
       return;
     }
     if (data) {
@@ -140,6 +141,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data, error } = await query;
     if (error) {
       console.error("Erro ao buscar respostas:", error);
+      showError("Bloqueio no Banco: Não foi possível carregar as respostas.");
       return;
     }
 
@@ -169,18 +171,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       let isAdmin = data.is_admin;
 
-      // CORREÇÃO CRÍTICA: Força a flag de admin no banco se for o e-mail oficial
-      // Isso é necessário para a política do banco liberar acesso as respostas.
       if (email === 'admin@ianapratica.com' && !isAdmin) {
         const { error: updateError } = await supabase.from('profiles').update({ is_admin: true }).eq('id', userId);
         if (!updateError) {
           isAdmin = true;
-        } else {
-          console.error("Erro ao setar permissão de admin no banco:", updateError);
         }
       }
 
-      // Fallback de segurança na interface
       if (email === 'admin@ianapratica.com') {
         isAdmin = true;
       }
@@ -196,7 +193,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       
       setState(prev => ({ ...prev, currentUser: user }));
     } else if (email === 'admin@ianapratica.com') {
-      // Caso a trigger do banco falhe em criar o profile
       const user: User = {
         id: userId,
         name: 'Administrador',
@@ -280,7 +276,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } as AppResponse;
 
     setState(prev => {
-      // Para formulários normais, substituímos o antigo. Para ganhadores, nós acumulamos na lista.
       const isSingleForm = type !== 'winner';
       const filteredResponses = isSingleForm
         ? prev.responses.filter(r => !(r.userId === prev.currentUser?.id && r.type === type))
