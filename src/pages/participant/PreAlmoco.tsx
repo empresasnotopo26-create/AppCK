@@ -53,19 +53,19 @@ export const PreAlmoco: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-500 max-w-2xl mx-auto pb-8">
       <div className="mb-10 text-center sm:text-left">
-        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Diagnóstico: Manhã</h2>
-        <p className="text-slate-500 mt-2 text-lg font-medium">Avalie os pilares do seu negócio de 1 (Muito Ruim) a 5 (Muito Bom).</p>
+        <h2 className="text-3xl font-black text-white tracking-tight">Diagnóstico: Manhã</h2>
+        <p className="text-slate-400 mt-2 text-lg font-medium">Avalie os pilares do seu negócio de 1 (Muito Ruim) a 5 (Muito Bom).</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-12">
         {questions.map((q, index) => (
           <div key={q.id} className="space-y-4 animate-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 100}ms` }}>
-            <Label className="text-xl font-bold text-slate-800 leading-tight block mb-2">
-              <span className="text-blue-600 mr-2">{index + 1}.</span>
+            <Label className="text-xl font-bold text-white leading-tight block mb-2">
+              <span className="text-orange-500 mr-2 drop-shadow-[0_0_5px_rgba(249,115,22,0.5)]">{index + 1}.</span>
               {q.title}
             </Label>
             
-            <div className="flex justify-between items-center gap-2 sm:gap-4 mt-4 bg-slate-50 p-3 sm:p-4 rounded-[2rem] border border-slate-100">
+            <div className="flex justify-between items-center gap-2 sm:gap-4 mt-4 bg-slate-950 p-3 sm:p-4 rounded-[2rem] border border-slate-800">
               {[1, 2, 3, 4, 5].map((num) => {
                 const isSelected = scores[q.id] === num;
                 return (
@@ -75,8 +75,8 @@ export const PreAlmoco: React.FC = () => {
                     onClick={() => setScore(q.id, num)}
                     className={`flex-1 h-16 sm:h-20 rounded-2xl sm:rounded-3xl text-xl sm:text-2xl font-black transition-all duration-300 ${
                       isSelected 
-                        ? 'bg-blue-600 text-white shadow-[0_8px_25px_rgba(37,99,235,0.4)] scale-110' 
-                        : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-blue-300 hover:text-blue-600 hover:bg-white'
+                        ? 'bg-orange-500 text-slate-950 shadow-[0_0_25px_rgba(249,115,22,0.5)] scale-110 border-orange-500' 
+                        : 'bg-slate-900 text-slate-500 border-2 border-slate-800 hover:border-orange-500/50 hover:text-orange-500'
                     }`}
                   >
                     {num}
@@ -84,18 +84,18 @@ export const PreAlmoco: React.FC = () => {
                 );
               })}
             </div>
-            <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-widest px-4 pt-1">
+            <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-widest px-4 pt-1">
               <span>Muito ruim</span>
               <span>Muito bom</span>
             </div>
           </div>
         ))}
 
-        <div className="pt-6 border-t border-slate-100">
+        <div className="pt-6 border-t border-slate-800">
           <Button 
             type="submit" 
             disabled={!isComplete}
-            className="w-full h-16 bg-slate-900 hover:bg-blue-600 text-white text-xl font-bold rounded-2xl transition-all shadow-lg disabled:opacity-50"
+            className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
           >
             Enviar Avaliação
           </Button>

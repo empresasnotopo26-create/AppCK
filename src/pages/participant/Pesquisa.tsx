@@ -44,15 +44,15 @@ export const Pesquisa: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-500 max-w-2xl mx-auto pb-8">
       <div className="mb-10 text-center sm:text-left">
-        <h2 className="text-3xl font-black text-slate-900 tracking-tight">Pesquisa Principal</h2>
-        <p className="text-slate-500 mt-2 text-lg font-medium">Conhecendo a realidade do seu negócio.</p>
+        <h2 className="text-3xl font-black text-white tracking-tight">Pesquisa Principal</h2>
+        <p className="text-slate-400 mt-2 text-lg font-medium">Conhecendo a realidade do seu negócio.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-12">
         
         {/* Faturamento */}
         <div className="space-y-5">
-          <Label className="text-xl font-bold text-slate-800 leading-tight">Qual é o faturamento anual da sua empresa?</Label>
+          <Label className="text-xl font-bold text-white leading-tight">Qual é o faturamento anual da sua empresa?</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             {revenueOptions.map((opt) => {
               const isSelected = revenue === opt;
@@ -62,15 +62,15 @@ export const Pesquisa: React.FC = () => {
                   onClick={() => setRevenue(opt)}
                   className={`p-5 rounded-3xl border-2 cursor-pointer transition-all duration-200 flex items-center justify-between ${
                     isSelected 
-                      ? 'border-blue-600 bg-blue-600 text-white shadow-[0_8px_30px_rgba(37,99,235,0.2)] scale-[1.02]' 
-                      : 'border-slate-100 bg-slate-50 hover:border-blue-300 hover:bg-white text-slate-700'
+                      ? 'border-orange-500 bg-orange-500 text-slate-950 shadow-[0_0_20px_rgba(249,115,22,0.3)] scale-[1.02]' 
+                      : 'border-slate-800 bg-slate-950 hover:border-orange-500/50 hover:bg-slate-900 text-slate-300'
                   }`}
                 >
                   <span className="font-bold text-[15px]">{opt}</span>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    isSelected ? 'border-white bg-blue-600' : 'border-slate-300 bg-white'
+                    isSelected ? 'border-slate-950 bg-orange-500' : 'border-slate-700 bg-slate-900'
                   }`}>
-                    {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                    {isSelected && <div className="w-2.5 h-2.5 bg-slate-950 rounded-full" />}
                   </div>
                 </div>
               );
@@ -80,10 +80,10 @@ export const Pesquisa: React.FC = () => {
 
         {/* Desafio Aberto */}
         <div className="space-y-5">
-          <Label className="text-xl font-bold text-slate-800 block">Qual é hoje o maior desafio da sua empresa?</Label>
+          <Label className="text-xl font-bold text-white block">Qual é hoje o maior desafio da sua empresa?</Label>
           <Textarea 
             placeholder="Descreva brevemente seu principal gargalo ou dificuldade..."
-            className="min-h-[160px] resize-none border-2 border-slate-100 focus-visible:ring-0 focus-visible:border-blue-500 rounded-3xl text-base p-6 bg-slate-50 focus:bg-white transition-all shadow-inner"
+            className="min-h-[160px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner"
             value={biggestChallenge}
             onChange={(e) => setBiggestChallenge(e.target.value)}
           />
@@ -91,10 +91,10 @@ export const Pesquisa: React.FC = () => {
 
         {/* Dúvidas Abertas */}
         <div className="space-y-5">
-          <Label className="text-xl font-bold text-slate-800 block">Quais são suas maiores dúvidas sobre IA neste momento?</Label>
+          <Label className="text-xl font-bold text-white block">Quais são suas maiores dúvidas sobre IA neste momento?</Label>
           <Textarea 
             placeholder="O que você espera esclarecer ao longo desta imersão?"
-            className="min-h-[160px] resize-none border-2 border-slate-100 focus-visible:ring-0 focus-visible:border-blue-500 rounded-3xl text-base p-6 bg-slate-50 focus:bg-white transition-all shadow-inner"
+            className="min-h-[160px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner"
             value={aiDoubts}
             onChange={(e) => setAiDoubts(e.target.value)}
           />
@@ -104,7 +104,7 @@ export const Pesquisa: React.FC = () => {
           <Button 
             type="submit" 
             disabled={!isComplete}
-            className="w-full h-16 bg-slate-900 hover:bg-blue-600 text-white text-xl font-bold rounded-2xl transition-all shadow-lg disabled:opacity-50"
+            className="w-full h-16 bg-slate-800 hover:bg-orange-500 text-white hover:text-slate-950 text-xl font-bold rounded-2xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] disabled:opacity-50 disabled:shadow-none"
           >
             Enviar Pesquisa
           </Button>

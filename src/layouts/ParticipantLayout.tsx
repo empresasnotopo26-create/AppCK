@@ -20,31 +20,31 @@ export const ParticipantLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans pb-20 md:pb-0">
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans pb-20 md:pb-0 text-slate-200">
       {/* Header Desktop (Escondido no Mobile) */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-20 hidden md:block">
+      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-20 hidden md:block">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center shadow-md border border-slate-100 overflow-hidden">
+            <div className="w-12 h-12 bg-slate-950 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.2)] border border-orange-500/30 overflow-hidden">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
                 className="w-full h-full object-contain scale-[1.8]"
               />
             </div>
-            <span className="font-bold text-slate-900 text-lg tracking-tight border-l border-slate-200 pl-4">
+            <span className="font-bold text-white text-lg tracking-tight border-l border-slate-700 pl-4">
               Imersão IA
             </span>
           </div>
           
           <div className="flex items-center gap-6">
             <div className="flex flex-col text-right">
-              <span className="text-sm font-bold text-slate-800">{currentUser.name.split(' ')[0]}</span>
-              <span className="text-xs text-slate-500">{currentUser.email}</span>
+              <span className="text-sm font-bold text-white">{currentUser.name.split(' ')[0]}</span>
+              <span className="text-xs text-slate-400">{currentUser.email}</span>
             </div>
             <button
               onClick={logout}
-              className="text-slate-400 hover:text-red-500 transition-colors p-3 rounded-2xl hover:bg-red-50"
+              className="text-slate-400 hover:text-red-400 transition-colors p-3 rounded-2xl hover:bg-slate-800"
               title="Sair"
             >
               <LogOut size={22} />
@@ -54,18 +54,18 @@ export const ParticipantLayout: React.FC = () => {
       </header>
 
       {/* Header Mobile Simplificado */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-20 md:hidden px-4 h-16 flex items-center justify-between">
+      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-20 md:hidden px-4 h-16 flex items-center justify-between">
          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-slate-900 rounded-full flex items-center justify-center shadow-sm overflow-hidden">
+            <div className="w-9 h-9 bg-slate-950 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(249,115,22,0.2)] border border-orange-500/30 overflow-hidden">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
                 alt="CK Negócios" 
                 className="w-full h-full object-contain scale-[1.8]"
               />
             </div>
-            <span className="font-bold text-slate-900 text-sm">Imersão IA</span>
+            <span className="font-bold text-white text-sm">Imersão IA</span>
           </div>
-          <button onClick={logout} className="text-slate-400 p-2">
+          <button onClick={logout} className="text-slate-400 p-2 hover:text-red-400">
              <LogOut size={20} />
           </button>
       </header>
@@ -74,7 +74,7 @@ export const ParticipantLayout: React.FC = () => {
         
         {/* Sidebar Desktop */}
         <aside className="hidden md:flex w-64 flex-col gap-2 flex-shrink-0">
-           <div className="text-xs font-bold text-slate-400 uppercase tracking-widest px-4 mb-2">Menu</div>
+           <div className="text-xs font-bold text-slate-500 uppercase tracking-widest px-4 mb-2">Menu</div>
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
@@ -84,25 +84,25 @@ export const ParticipantLayout: React.FC = () => {
                   to={item.path}
                   className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 scale-[1.02]'
-                      : 'text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-sm'
+                      ? 'bg-orange-500 text-slate-950 shadow-[0_0_20px_rgba(249,115,22,0.3)] scale-[1.02] font-bold'
+                      : 'text-slate-400 hover:bg-slate-900 hover:text-white hover:shadow-sm'
                   }`}
                 >
-                  <Icon size={20} className={isActive ? 'text-white' : 'text-slate-400'} />
-                  <span className="font-semibold">{item.name}</span>
+                  <Icon size={20} className={isActive ? 'text-slate-950' : 'text-slate-400'} />
+                  <span className={isActive ? 'font-bold' : 'font-semibold'}>{item.name}</span>
                 </Link>
               );
             })}
         </aside>
 
         {/* Content Area */}
-        <main className="flex-1 w-full bg-white rounded-3xl shadow-sm border border-slate-100 p-5 sm:p-10 min-h-[500px] overflow-hidden">
+        <main className="flex-1 w-full bg-slate-900 rounded-3xl shadow-xl border border-slate-800 p-5 sm:p-10 min-h-[500px] overflow-hidden">
           <Outlet />
         </main>
       </div>
 
       {/* Bottom Navigation (Mobile) */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 flex justify-around items-center h-20 px-2 z-30 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.05)] rounded-t-3xl">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-800 flex justify-around items-center h-20 px-2 z-30 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)] rounded-t-3xl">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -111,13 +111,13 @@ export const ParticipantLayout: React.FC = () => {
               key={item.path}
               to={item.path}
               className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors ${
-                isActive ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'
+                isActive ? 'text-orange-500' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-blue-50' : ''}`}>
-                <Icon size={22} className={isActive ? 'text-blue-600' : 'text-slate-400'} />
+              <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-orange-500/10 shadow-[0_0_15px_rgba(249,115,22,0.2)]' : ''}`}>
+                <Icon size={22} className={isActive ? 'text-orange-500' : 'text-slate-500'} />
               </div>
-              <span className={`text-[10px] font-bold ${isActive ? 'text-blue-600' : 'text-slate-400'}`}>
+              <span className={`text-[10px] font-bold ${isActive ? 'text-orange-500' : 'text-slate-500'}`}>
                 {item.name}
               </span>
             </Link>
