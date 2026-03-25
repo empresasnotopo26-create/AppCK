@@ -123,7 +123,8 @@ export const AdminNPS: React.FC = () => {
             <Table>
               <TableHeader className="bg-slate-950">
                 <TableRow className="border-slate-800 hover:bg-slate-950">
-                  <TableHead className="text-slate-400 w-[250px]">Participante</TableHead>
+                  <TableHead className="text-slate-400 w-[200px]">Participante</TableHead>
+                  <TableHead className="text-slate-400 w-[120px] text-center">Data</TableHead>
                   <TableHead className="text-slate-400 w-[100px] text-center">Nota</TableHead>
                   <TableHead className="text-slate-400">Comentário</TableHead>
                 </TableRow>
@@ -138,6 +139,10 @@ export const AdminNPS: React.FC = () => {
                         <TableCell className="font-medium text-slate-300">
                           <div>{user?.name || 'Desconhecido'}</div>
                           <div className="text-xs text-slate-500">{user?.email}</div>
+                        </TableCell>
+                        <TableCell className="text-center text-xs text-slate-500">
+                          {new Date(p.createdAt).toLocaleDateString('pt-BR')} <br/>
+                          {new Date(p.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </TableCell>
                         <TableCell className="text-center">
                           <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${
@@ -156,7 +161,7 @@ export const AdminNPS: React.FC = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="h-24 text-center text-slate-500">
+                    <TableCell colSpan={4} className="h-24 text-center text-slate-500">
                       Nenhuma avaliação encontrada.
                     </TableCell>
                   </TableRow>
