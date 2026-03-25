@@ -24,11 +24,17 @@ export const ParticipantLayout: React.FC = () => {
       {/* Header Desktop (Escondido no Mobile) */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20 hidden md:block">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center shadow-md shadow-blue-500/20">
-              <span className="text-white font-bold text-lg tracking-tight">CK</span>
+          <div className="flex items-center gap-4">
+            <div className="bg-slate-900 px-4 py-2.5 rounded-xl shadow-md">
+              <img 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
+                alt="CK Negócios" 
+                className="h-6 object-contain"
+              />
             </div>
-            <span className="font-bold text-slate-900 text-lg tracking-tight">Imersão IA</span>
+            <span className="font-bold text-slate-900 text-lg tracking-tight border-l border-slate-200 pl-4">
+              Imersão IA
+            </span>
           </div>
           
           <div className="flex items-center gap-6">
@@ -49,11 +55,15 @@ export const ParticipantLayout: React.FC = () => {
 
       {/* Header Mobile Simplificado */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20 md:hidden px-4 h-16 flex items-center justify-between">
-         <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-sm">CK</span>
+         <div className="flex items-center gap-3">
+            <div className="bg-slate-900 px-2.5 py-1.5 rounded-lg">
+              <img 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
+                alt="CK Negócios" 
+                className="h-4 object-contain"
+              />
             </div>
-            <span className="font-bold text-slate-900">Imersão IA</span>
+            <span className="font-bold text-slate-900 text-sm">Imersão IA</span>
           </div>
           <button onClick={logout} className="text-slate-400 p-2">
              <LogOut size={20} />

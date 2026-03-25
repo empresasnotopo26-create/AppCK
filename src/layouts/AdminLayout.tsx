@@ -22,10 +22,14 @@ export const AdminLayout: React.FC = () => {
       <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
         <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950/50">
           <div className="flex items-center gap-3">
-             <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <span className="text-white font-bold text-sm">CK</span>
-            </div>
-            <span className="font-bold text-white tracking-wide text-sm">APP ADMIN</span>
+            <img 
+              src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
+              alt="CK Negócios" 
+              className="h-7 object-contain"
+            />
+            <span className="font-bold text-white tracking-wide text-xs border-l border-slate-700 pl-3">
+              APP ADMIN
+            </span>
           </div>
         </div>
         

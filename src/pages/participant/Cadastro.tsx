@@ -4,7 +4,7 @@ import { useAppContext } from '../../store/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, ArrowRight, LogIn, UserPlus } from 'lucide-react';
+import { ArrowRight, LogIn, UserPlus } from 'lucide-react';
 import { showSuccess, showError } from '../../utils/toast';
 
 export const Cadastro: React.FC = () => {
@@ -52,11 +52,17 @@ export const Cadastro: React.FC = () => {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/60 overflow-hidden relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         <div className="p-10 pb-6 text-center border-b border-slate-50 bg-white/50 backdrop-blur-sm">
-          <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20">
-            <Sparkles className="text-white w-8 h-8" />
+          <div className="mx-auto mb-6 flex justify-center">
+            <div className="bg-slate-900 px-6 py-4 rounded-2xl shadow-xl shadow-slate-900/10">
+              <img 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png" 
+                alt="CK Negócios" 
+                className="h-10 object-contain"
+              />
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">APP CK</h1>
-          <p className="text-slate-500 text-sm font-medium">Imersão de Inteligência Artificial</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Imersão de IA</h1>
+          <p className="text-slate-500 text-sm font-medium">Faça login ou crie sua conta para iniciar</p>
         </div>
 
         {/* Abas de Navegação */}
