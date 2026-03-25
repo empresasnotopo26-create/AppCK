@@ -4,7 +4,7 @@ import { useAppContext } from '../../store/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRight, LogIn, UserPlus } from 'lucide-react';
+import { ArrowRight, LogIn, UserPlus, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '../../utils/toast';
 
 export const Cadastro: React.FC = () => {
@@ -12,33 +12,39 @@ export const Cadastro: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
   const { registerUser, loginUser } = useAppContext();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    if (isLogin) {
-      if (!email.trim() || !password.trim()) return;
-      
-      const result = loginUser(email, password);
-      if (result.success) {
-        showSuccess('Login realizado com sucesso!');
-        navigate('/app');
+    try {
+      if (isLogin) {
+        if (!email.trim() || !password.trim()) return;
+        
+        const result = await loginUser(email, password);
+        if (result.success) {
+          showSuccess('Login realizado com sucesso!');
+          navigate('/app');
+        } else {
+          showError(result.error || 'Erro ao fazer login.');
+        }
       } else {
-        showError(result.error || 'Erro ao fazer login.');
+        if (!name.trim() || !email.trim() || !password.trim()) return;
+        
+        const result = await registerUser(name, email, password);
+        if (result.success) {
+          showSuccess('Cadastro realizado com sucesso!');
+          navigate('/app');
+        } else {
+          showError(result.error || 'Erro ao realizar cadastro.');
+        }
       }
-    } else {
-      if (!name.trim() || !email.trim() || !password.trim()) return;
-      
-      const result = registerUser(name, email, password);
-      if (result.success) {
-        showSuccess('Cadastro realizado com sucesso!');
-        navigate('/app');
-      } else {
-        showError(result.error || 'Erro ao realizar cadastro.');
-      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -139,10 +145,17 @@ export const Cadastro: React.FC = () => {
           
           <Button 
             type="submit" 
-            className="w-full h-14 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-lg rounded-xl transition-all group mt-6 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)]"
+            disabled={isLoading}
+            className="w-full h-14 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-lg rounded-xl transition-all group mt-6 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] disabled:opacity-70 disabled:shadow-none"
           >
-            {isLogin ? 'Entrar' : 'Criar Conta'}
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            {isLoading ? (
+              <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <>
+                {isLogin ? 'Entrar' : 'Criar Conta'}
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </Button>
         </form>
       </div>

@@ -60,3 +60,8 @@ export interface AppState {
   responses: AppResponse[];
   winners: User[];
 }
+
+export interface AuthResult {
+  success: boolean;
+  error?: string;
+}
