@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
 import { BarChart3, Users, MessageSquare, ListTodo, Coffee, Star, Gift, LogOut } from 'lucide-react';
-import logoImg from '@/assets/logo.png';
 
 export const AdminLayout: React.FC = () => {
   const { currentUser, logout } = useAppContext();
@@ -34,11 +33,11 @@ export const AdminLayout: React.FC = () => {
       <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
         <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-950/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border border-slate-800/50 shadow-sm">
+            <div className="w-10 h-10 flex items-center justify-center">
               <img 
-                src={logoImg} 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-cover scale-110"
+                className="w-full h-full object-contain"
               />
             </div>
             <span className="font-bold text-white tracking-wide text-xs border-l border-slate-700 pl-3">

@@ -2,7 +2,6 @@ import React from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
 import { LogOut, Home, ClipboardList, Coffee, Star, MessageSquare } from 'lucide-react';
-import logoImg from '@/assets/logo.png';
 
 export const ParticipantLayout: React.FC = () => {
   const { currentUser, logout } = useAppContext();
@@ -31,11 +30,11 @@ export const ParticipantLayout: React.FC = () => {
       <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-20 hidden md:block">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.2)] overflow-hidden">
+            <div className="w-12 h-12 flex items-center justify-center drop-shadow-[0_0_10px_rgba(249,115,22,0.2)]">
               <img 
-                src={logoImg} 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-cover scale-110"
+                className="w-full h-full object-contain"
               />
             </div>
             <span className="font-bold text-white text-lg tracking-tight border-l border-slate-700 pl-4">
@@ -62,11 +61,11 @@ export const ParticipantLayout: React.FC = () => {
       {/* Header Mobile Simplificado */}
       <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-20 md:hidden px-4 h-16 flex items-center justify-between">
          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(249,115,22,0.2)] overflow-hidden">
+            <div className="w-9 h-9 flex items-center justify-center">
               <img 
-                src={logoImg} 
+                src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
-                className="w-full h-full object-cover scale-110"
+                className="w-full h-full object-contain"
               />
             </div>
             <span className="font-bold text-white text-sm">Imersão IA</span>
