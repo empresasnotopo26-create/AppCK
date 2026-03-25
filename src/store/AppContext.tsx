@@ -28,7 +28,7 @@ const generateMockData = (): AppState => {
     },
     {
       id: 'r7', userId: '1', type: 'pre-almoco', createdAt: new Date().toISOString(),
-      data: { clarityScore: 4, usefulnessScore: 5, relevantTheme: 'Automação', afternoonDoubts: 'Exemplos práticos de agentes' }
+      data: { dataClarity: 4, processExecution: 3, salesPredictability: 2, customerEvaluation: 5 }
     },
     {
       id: 'r8', userId: '1', type: 'quiz', createdAt: new Date().toISOString(),

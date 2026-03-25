@@ -37,10 +37,10 @@ export interface PesquisaResponse extends BaseResponse {
 export interface PreAlmocoResponse extends BaseResponse {
   type: 'pre-almoco';
   data: {
-    clarityScore: number;
-    usefulnessScore: number;
-    relevantTheme: string;
-    afternoonDoubts: string;
+    dataClarity: number;
+    processExecution: number;
+    salesPredictability: number;
+    customerEvaluation: number;
   };
 }
 
