@@ -95,10 +95,22 @@ export const ParticipantLayout: React.FC = () => {
             })}
         </aside>
 
-        {/* Content Area */}
-        <main className="flex-1 w-full bg-slate-900 rounded-3xl shadow-xl border border-slate-800 p-5 sm:p-10 min-h-[500px] overflow-hidden">
-          <Outlet />
-        </main>
+        {/* Content Area & Banner Rodapé */}
+        <div className="flex-1 w-full flex flex-col gap-6 min-w-0">
+          <main className="w-full bg-slate-900 rounded-3xl shadow-xl border border-slate-800 p-5 sm:p-10 min-h-[500px] overflow-hidden">
+            <Outlet />
+          </main>
+          
+          {/* Imagem de Banner no Rodapé */}
+          <div className="w-full rounded-3xl overflow-hidden border border-slate-800 shadow-xl mt-2 flex-shrink-0">
+            <img 
+              src="https://ik.imagekit.io/lflb43qwh/ENT/Banner%20Imers%C3%A3o%20(1920%20x%201080%20px).png" 
+              alt="Banner Imersão CK Negócios" 
+              className="w-full h-auto object-cover"
+            />
+          </div>
+        </div>
+
       </div>
 
       {/* Bottom Navigation (Mobile) */}

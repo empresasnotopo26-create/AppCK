@@ -65,31 +65,37 @@ export const Cadastro: React.FC = () => {
           <p className="text-slate-400 text-sm font-medium">Faça login ou crie sua conta para iniciar</p>
         </div>
 
-        {/* Abas de Navegação */}
-        <div className="flex border-b border-slate-800 bg-slate-950/50">
-          <button
-            type="button"
-            onClick={() => setIsLogin(false)}
-            className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-              !isLogin ? 'text-orange-500 border-b-2 border-orange-500 bg-slate-900' : 'text-slate-500 hover:text-slate-300'
-            }`}
-          >
-            <UserPlus className="w-4 h-4" />
-            Criar Conta
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsLogin(true)}
-            className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-              isLogin ? 'text-orange-500 border-b-2 border-orange-500 bg-slate-900' : 'text-slate-500 hover:text-slate-300'
-            }`}
-          >
-            <LogIn className="w-4 h-4" />
-            Fazer Login
-          </button>
+        {/* Abas de Navegação Arredondadas (Estilo Pílula) */}
+        <div className="px-6 py-5 bg-slate-900 border-b border-slate-800/50">
+          <div className="flex p-1.5 bg-slate-950 border border-slate-800 rounded-2xl">
+            <button
+              type="button"
+              onClick={() => setIsLogin(false)}
+              className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
+                !isLogin 
+                  ? 'bg-slate-800 text-orange-500 shadow-md shadow-orange-500/10' 
+                  : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/50'
+              }`}
+            >
+              <UserPlus className="w-4 h-4" />
+              Criar Conta
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsLogin(true)}
+              className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
+                isLogin 
+                  ? 'bg-slate-800 text-orange-500 shadow-md shadow-orange-500/10' 
+                  : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/50'
+              }`}
+            >
+              <LogIn className="w-4 h-4" />
+              Fazer Login
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-5 bg-slate-900">
+        <form onSubmit={handleSubmit} className="px-8 pb-8 pt-6 space-y-5 bg-slate-900">
           
           {!isLogin && (
             <div className="space-y-2">
