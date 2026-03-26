@@ -14,11 +14,9 @@ export const Cadastro: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { registerUser, loginUser, currentUser, isLoadingAuth } = useAppContext();
+  const { registerUser, loginUser, currentUser } = useAppContext();
   const navigate = useNavigate();
 
-  // Dependemos EXCLUSIVAMENTE deste useEffect para o redirecionamento.
-  // Assim garantimos que o currentUser já foi populado com sucesso pelo provedor.
   useEffect(() => {
     if (currentUser) {
       if (currentUser.isAdmin) navigate('/admin');
@@ -36,8 +34,9 @@ export const Cadastro: React.FC = () => {
         
         const result = await loginUser(email, password);
         if (result.success) {
-          showSuccess('Conectado! Aguarde o redirecionamento...');
-          // Retirado o 'navigate' daqui. Quem faz isso agora é o useEffect acima.
+          showSuccess('Login realizado com sucesso!');
+          if (result.isAdmin) navigate('/admin');
+          else navigate('/app');
         } else {
           showError(result.error || 'Erro ao fazer login.');
         }
@@ -46,8 +45,9 @@ export const Cadastro: React.FC = () => {
         
         const result = await registerUser(name, email, password);
         if (result.success) {
-          showSuccess('Conta criada! Aguarde o redirecionamento...');
-          // Retirado o 'navigate' daqui. Quem faz isso agora é o useEffect acima.
+          showSuccess('Cadastro realizado com sucesso!');
+          if (result.isAdmin) navigate('/admin');
+          else navigate('/app');
         } else {
           showError(result.error || 'Erro ao realizar cadastro.');
         }
@@ -57,20 +57,9 @@ export const Cadastro: React.FC = () => {
     }
   };
 
-  // Mostrar uma tela de carregamento enquanto o Supabase verifica se já havia uma sessão ativa
-  if (isLoadingAuth) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col justify-center items-center">
-        <Loader2 className="w-12 h-12 text-orange-500 animate-spin mb-4" />
-        <p className="text-orange-500 font-bold tracking-widest uppercase text-sm animate-pulse">
-          Verificando Acesso...
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4 relative overflow-hidden">
+      {/* Background Decorativo Dark Neon Intensificado */}
       <div className="absolute top-0 w-full h-1/2 bg-gradient-to-b from-orange-500/10 to-transparent"></div>
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-orange-500 rounded-full blur-[150px] opacity-25 pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600 rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
@@ -179,6 +168,7 @@ export const Cadastro: React.FC = () => {
         </form>
       </div>
 
+      {/* Seção dos Patrocinadores na tela de Login */}
       <div className="mt-8 z-10 w-full max-w-md mx-auto text-center animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Patrocinadores</p>
         <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4 flex justify-center items-center shadow-lg">

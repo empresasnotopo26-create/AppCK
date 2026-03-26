@@ -83,7 +83,6 @@ export interface AppState {
   currentUser: User | null;
   responses: AppResponse[];
   winners: User[];
-  isLoadingAuth: boolean;
 }
 
 export interface AuthResult {

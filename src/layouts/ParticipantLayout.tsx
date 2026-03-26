@@ -1,19 +1,11 @@
 import React from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
-import { LogOut, Home, ClipboardList, Coffee, Star, MessageSquare, Loader2 } from 'lucide-react';
+import { LogOut, Home, ClipboardList, Coffee, Star, MessageSquare } from 'lucide-react';
 
 export const ParticipantLayout: React.FC = () => {
-  const { currentUser, logout, isLoadingAuth } = useAppContext();
+  const { currentUser, logout } = useAppContext();
   const location = useLocation();
-
-  if (isLoadingAuth) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col justify-center items-center">
-        <Loader2 className="w-12 h-12 text-orange-500 animate-spin mb-4" />
-      </div>
-    );
-  }
 
   if (!currentUser) {
     return <Navigate to="/cadastro" />;
