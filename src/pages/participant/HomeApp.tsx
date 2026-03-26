@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
-import { ChevronRight, CheckCircle2, Clock, PlayCircle, Trophy } from 'lucide-react';
+import { ChevronRight, CheckCircle2, PlayCircle, Trophy } from 'lucide-react';
 
 export const HomeApp: React.FC = () => {
   const { currentUser, responses } = useAppContext();
@@ -21,6 +21,11 @@ export const HomeApp: React.FC = () => {
   const completedTasks = tasks.filter(t => hasCompleted(t.type)).length;
   const progress = Math.round((completedTasks / tasks.length) * 100);
 
+  // Cálculos do SVG do Gráfico Circular
+  const radius = 46;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
       
@@ -33,11 +38,47 @@ export const HomeApp: React.FC = () => {
           <p className="text-slate-300 text-lg font-medium">Sua jornada na Imersão de IA acontece aqui. Complete as etapas para maximizar seu aprendizado.</p>
         </div>
         
-        {/* Progresso Circular */}
-        <div className="relative z-10 bg-black p-6 rounded-3xl border border-orange-500/40 text-center w-full sm:w-auto flex-shrink-0 shadow-[0_0_20px_rgba(255,85,0,0.2)]">
-          <div className="text-sm font-bold text-orange-500 uppercase tracking-widest mb-1 drop-shadow-[0_0_5px_rgba(255,85,0,0.5)]">Progresso</div>
-          <div className="text-4xl font-black text-white">{progress}%</div>
-          <div className="text-xs font-medium text-slate-400 mt-1">{completedTasks} de {tasks.length} concluídas</div>
+        {/* Gráfico de Progresso Circular */}
+        <div className="relative z-10 bg-slate-950/80 backdrop-blur-sm p-6 rounded-[2rem] border border-orange-500/30 text-center w-full sm:w-auto flex flex-col items-center justify-center flex-shrink-0 shadow-[0_0_25px_rgba(255,85,0,0.15)] min-w-[200px]">
+          <div className="text-xs font-black text-orange-500 uppercase tracking-widest mb-4 drop-shadow-[0_0_8px_rgba(255,85,0,0.6)]">
+            Progresso
+          </div>
+          
+          <div className="relative flex items-center justify-center mb-5">
+            <svg className="w-28 h-28 transform -rotate-90">
+              {/* Fundo do círculo */}
+              <circle
+                className="text-slate-800"
+                strokeWidth="8"
+                stroke="currentColor"
+                fill="transparent"
+                r={radius}
+                cx="56"
+                cy="56"
+              />
+              {/* Círculo Animado do Progresso */}
+              <circle
+                className="text-orange-500 transition-all duration-1000 ease-out"
+                strokeWidth="8"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                stroke="currentColor"
+                fill="transparent"
+                r={radius}
+                cx="56"
+                cy="56"
+                style={{ filter: 'drop-shadow(0 0 6px rgba(249,115,22,0.8))' }}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-3xl font-black text-white">{progress}%</span>
+            </div>
+          </div>
+
+          <div className="text-xs font-bold text-slate-400 bg-slate-900 px-4 py-2 rounded-full border border-slate-800 shadow-inner">
+            {completedTasks} de {tasks.length} concluídas
+          </div>
         </div>
       </div>
 
