@@ -81,7 +81,7 @@ export const PreAlmoco: React.FC = () => {
             </Label>
             
             <div className="flex justify-between items-center gap-1 sm:gap-3 mt-4 bg-slate-950 p-2 sm:p-4 rounded-[2rem] border border-slate-800">
-              {/* Array alterado para ir apenas de 0 a 4 */}
+              {/* Array mapeando explicitamente apenas as opções de 0 a 4 */}
               {[0, 1, 2, 3, 4].map((num) => {
                 const isSelected = scores[q.id] === num;
                 return (
