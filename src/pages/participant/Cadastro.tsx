@@ -8,7 +8,7 @@ import { ArrowRight, LogIn, UserPlus, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '../../utils/toast';
 
 export const Cadastro: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true); // Agora inicia como true (Login é o padrão)
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -87,18 +87,6 @@ export const Cadastro: React.FC = () => {
           <div className="flex p-1.5 bg-slate-950 border border-slate-800 rounded-2xl">
             <button
               type="button"
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
-                !isLogin 
-                  ? 'bg-slate-800 text-orange-500 shadow-md shadow-orange-500/10' 
-                  : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/50'
-              }`}
-            >
-              <UserPlus className="w-4 h-4" />
-              Criar Conta
-            </button>
-            <button
-              type="button"
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
                 isLogin 
@@ -108,6 +96,18 @@ export const Cadastro: React.FC = () => {
             >
               <LogIn className="w-4 h-4" />
               Fazer Login
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsLogin(false)}
+              className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
+                !isLogin 
+                  ? 'bg-slate-800 text-orange-500 shadow-md shadow-orange-500/10' 
+                  : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/50'
+              }`}
+            >
+              <UserPlus className="w-4 h-4" />
+              Criar Conta
             </button>
           </div>
         </div>
