@@ -52,7 +52,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [state.currentUser]);
 
-  // INSCRIÇÃO EM TEMPO REAL PARA ADMIN (Escuta INSERT e DELETE)
+  // INSCRIÇÃO EM TEMPO REAL PARA ADMIN
   useEffect(() => {
     if (state.currentUser?.isAdmin) {
       const channel = supabase
@@ -115,7 +115,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
     if (error) {
       console.error("Erro ao buscar usuários:", error);
-      showError("Bloqueio no Banco: Não foi possível carregar os usuários.");
+      showError("Não foi possível carregar os usuários.");
       return;
     }
     if (data) {
@@ -141,7 +141,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data, error } = await query;
     if (error) {
       console.error("Erro ao buscar respostas:", error);
-      showError("Bloqueio no Banco: Não foi possível carregar as respostas.");
+      showError("Não foi possível carregar as respostas.");
       return;
     }
 
@@ -159,7 +159,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const fetchProfile = async (userId: string, email?: string) => {
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+    // Trocado .single() por .maybeSingle() para suprimir erros 406 no console
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     
     if (data) {
       if (data.is_active === false) {
@@ -255,13 +256,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const saveResponse = async (type: AppResponse['type'], data: any) => {
     if (!state.currentUser) return;
     
+    // Trocado .single() por .maybeSingle()
     const { data: insertedData, error } = await supabase.from('responses').insert({
       user_id: state.currentUser.id,
       type: type,
       data: data
-    }).select().single();
+    }).select().maybeSingle();
 
-    if (error) {
+    if (error || !insertedData) {
       showError('Falha ao salvar a resposta.');
       console.error(error);
       return;
