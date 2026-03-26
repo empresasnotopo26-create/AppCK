@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --background: 0 0% 0%; /* Fundo Preto Puro */
+    --foreground: 0 0% 100%; /* Texto Branco */
+    --card: 0 0% 2%; /* Card Preto com brilho mínimo */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 24 100% 50%; /* Laranja Neon */
+    --primary-foreground: 0 0% 0%; /* Texto Preto no botão laranja */
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 8%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 24 100% 10%;
+    --accent-foreground: 24 100% 50%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 24 100% 15%; /* Bordas Laranja Escuro/Marrom em vez de Cinza */
+    --input: 24 100% 15%;
+    --ring: 24 100% 50%; /* Foco do input em Neon */
+    --radius: 1rem;
   }
 }
 
@@ -33,6 +33,6 @@
   }
 
   body {
-    @apply bg-black text-slate-200 selection:bg-orange-500/30;
+    @apply bg-black text-white selection:bg-orange-500/30;
   }
 }
