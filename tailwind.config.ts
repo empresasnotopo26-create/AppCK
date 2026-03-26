@@ -19,6 +19,34 @@ export default {
     },
     extend: {
       colors: {
+        // Substituindo o Slate por tons de Preto e Cinza super escuros
+        slate: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#d4d4d8', 
+          400: '#a1a1aa', 
+          500: '#71717a', 
+          600: '#52525b', 
+          700: '#27272a', 
+          800: '#141414', // Cinza muito escuro (Bordas)
+          900: '#0a0a0a', // Quase preto (Cards)
+          950: '#000000', // Preto absoluto (Fundos)
+        },
+        // Elevando o Laranja para um tom NEON muito mais vibrante
+        orange: {
+          50: '#fff4ed',
+          100: '#ffebd4',
+          200: '#ffd3a8',
+          300: '#ffb270',
+          400: '#ff8a33',
+          500: '#ff5e00', // Laranja Neon Puro
+          600: '#e64900',
+          700: '#bf3600',
+          800: '#992b00',
+          900: '#7d2503',
+          950: '#451000',
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -70,20 +98,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {

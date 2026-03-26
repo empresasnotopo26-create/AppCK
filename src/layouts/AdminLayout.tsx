@@ -33,7 +33,7 @@ export const AdminLayout: React.FC = () => {
       <aside className="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col flex-shrink-0 z-20">
         <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-950/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-950 border border-orange-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(255,94,0,0.3)]">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
@@ -56,11 +56,11 @@ export const AdminLayout: React.FC = () => {
                 to={item.path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm ${
                   isActive
-                    ? 'bg-blue-600/10 text-blue-400 font-medium shadow-[inset_2px_0_0_0_rgba(37,99,235,1)]'
+                    ? 'bg-orange-500/10 text-orange-500 font-bold shadow-[inset_2px_0_0_0_#ff5e00] drop-shadow-[0_0_8px_rgba(255,94,0,0.3)]'
                     : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
               >
-                <Icon size={18} className={isActive ? 'text-blue-500' : 'text-slate-500'} />
+                <Icon size={18} className={isActive ? 'text-orange-500 drop-shadow-[0_0_5px_rgba(255,94,0,0.5)]' : 'text-slate-500'} />
                 {item.name}
               </Link>
             );

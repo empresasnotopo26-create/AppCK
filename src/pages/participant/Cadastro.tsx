@@ -8,7 +8,7 @@ import { ArrowRight, LogIn, UserPlus, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '../../utils/toast';
 
 export const Cadastro: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true); // Agora inicia como true (Login é o padrão)
+  const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,7 +17,6 @@ export const Cadastro: React.FC = () => {
   const { registerUser, loginUser, currentUser } = useAppContext();
   const navigate = useNavigate();
 
-  // Redireciona caso já esteja logado e tente acessar /cadastro
   useEffect(() => {
     if (currentUser) {
       if (currentUser.isAdmin) navigate('/admin');
@@ -59,18 +58,17 @@ export const Cadastro: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      {/* Background Decorativo Dark Neon */}
-      <div className="absolute top-0 w-full h-1/2 bg-gradient-to-b from-orange-500/5 to-slate-950 border-b border-orange-500/10"></div>
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-orange-600 rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-500 rounded-full blur-[120px] opacity-10 pointer-events-none"></div>
+    <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4 relative overflow-hidden">
+      {/* Background Decorativo Dark Neon Intensificado */}
+      <div className="absolute top-0 w-full h-1/2 bg-gradient-to-b from-orange-500/10 to-transparent"></div>
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-orange-500 rounded-full blur-[150px] opacity-25 pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600 rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-slate-900 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-slate-800 overflow-hidden relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="w-full max-w-md bg-slate-900 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-slate-800 overflow-hidden relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
         
         <div className="p-10 pb-6 text-center border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
           <div className="mx-auto mb-6 flex justify-center">
-            {/* Logo Wrapper Redondo */}
-            <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center shadow-[0_0_20px_rgba(249,115,22,0.3)]">
+            <div className="w-28 h-28 rounded-full overflow-hidden bg-black border border-orange-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(255,94,0,0.4)]">
               <img 
                 src="https://ik.imagekit.io/lflb43qwh/ENT/ck_negocios_v2_orange_white.png?updatedAt=1774469979929" 
                 alt="CK Negócios" 
@@ -82,15 +80,14 @@ export const Cadastro: React.FC = () => {
           <p className="text-slate-400 text-sm font-medium">Faça login ou crie sua conta para iniciar</p>
         </div>
 
-        {/* Abas de Navegação Arredondadas (Estilo Pílula) */}
         <div className="px-6 py-5 bg-slate-900 border-b border-slate-800/50">
-          <div className="flex p-1.5 bg-slate-950 border border-slate-800 rounded-2xl">
+          <div className="flex p-1.5 bg-black border border-slate-800 rounded-2xl">
             <button
               type="button"
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
                 isLogin 
-                  ? 'bg-slate-800 text-orange-500 shadow-md shadow-orange-500/10' 
+                  ? 'bg-slate-800 text-orange-500 shadow-[0_0_15px_rgba(255,94,0,0.2)]' 
                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/50'
               }`}
             >
@@ -102,7 +99,7 @@ export const Cadastro: React.FC = () => {
               onClick={() => setIsLogin(false)}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${
                 !isLogin 
-                  ? 'bg-slate-800 text-orange-500 shadow-md shadow-orange-500/10' 
+                  ? 'bg-slate-800 text-orange-500 shadow-[0_0_15px_rgba(255,94,0,0.2)]' 
                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900/50'
               }`}
             >
@@ -123,7 +120,7 @@ export const Cadastro: React.FC = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required={!isLogin}
-                className="h-12 border-slate-700 bg-slate-950 text-white focus-visible:ring-orange-500 focus-visible:border-orange-500 placeholder:text-slate-600 rounded-xl transition-all"
+                className="h-12 border-slate-800 bg-black text-white focus-visible:ring-orange-500 focus-visible:border-orange-500 placeholder:text-slate-600 rounded-xl transition-all"
               />
             </div>
           )}
@@ -137,7 +134,7 @@ export const Cadastro: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-12 border-slate-700 bg-slate-950 text-white focus-visible:ring-orange-500 focus-visible:border-orange-500 placeholder:text-slate-600 rounded-xl transition-all"
+              className="h-12 border-slate-800 bg-black text-white focus-visible:ring-orange-500 focus-visible:border-orange-500 placeholder:text-slate-600 rounded-xl transition-all"
             />
           </div>
 
@@ -150,14 +147,14 @@ export const Cadastro: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="h-12 border-slate-700 bg-slate-950 text-white focus-visible:ring-orange-500 focus-visible:border-orange-500 placeholder:text-slate-600 rounded-xl transition-all"
+              className="h-12 border-slate-800 bg-black text-white focus-visible:ring-orange-500 focus-visible:border-orange-500 placeholder:text-slate-600 rounded-xl transition-all"
             />
           </div>
           
           <Button 
             type="submit" 
             disabled={isLoading}
-            className="w-full h-14 bg-orange-500 hover:bg-orange-400 text-slate-950 font-bold text-lg rounded-xl transition-all group mt-6 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] disabled:opacity-70 disabled:shadow-none"
+            className="w-full h-14 bg-orange-500 hover:bg-orange-400 text-black font-black text-lg rounded-xl transition-all group mt-6 shadow-[0_0_20px_rgba(255,94,0,0.4)] hover:shadow-[0_0_35px_rgba(255,94,0,0.6)] disabled:opacity-70 disabled:shadow-none"
           >
             {isLoading ? (
               <Loader2 className="w-6 h-6 animate-spin" />

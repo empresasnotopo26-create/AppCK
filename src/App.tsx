@@ -29,7 +29,7 @@ const App = () => (
   <AppProvider>
     <TooltipProvider>
       <Toaster />
-      <Sonner position="top-center" theme="light" />
+      <Sonner position="top-center" theme="dark" />
       <BrowserRouter>
         <Routes>
           {/* Rotas Públicas */}
