@@ -11,6 +11,7 @@ interface AppContextType extends AppState {
   updateUser: (userId: string, data: { isAdmin?: boolean, isActive?: boolean }) => Promise<void>;
   addWinner: (user: User) => Promise<void>;
   clearWinners: () => Promise<void>;
+  clearAllResponses: () => Promise<void>;
 }
 
 const generateMockData = (): AppState => {
@@ -159,7 +160,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const fetchProfile = async (userId: string, email?: string) => {
-    // Trocado .single() por .maybeSingle() para suprimir erros 406 no console
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     
     if (data) {
@@ -256,7 +256,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const saveResponse = async (type: AppResponse['type'], data: any) => {
     if (!state.currentUser) return;
     
-    // Trocado .single() por .maybeSingle()
     const { data: insertedData, error } = await supabase.from('responses').insert({
       user_id: state.currentUser.id,
       type: type,
@@ -309,6 +308,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  const clearAllResponses = async () => {
+    // Apaga todas as respostas do banco (filtro obrigatório not.is.null garante que delete tudo)
+    const { error } = await supabase.from('responses').delete().not('id', 'is', null);
+    if (error) {
+      showError('Erro ao apagar os dados do banco.');
+      console.error(error);
+      return;
+    }
+    showSuccess('Todas as respostas foram apagadas com sucesso!');
+    setState(prev => ({
+      ...prev,
+      responses: [],
+      winners: []
+    }));
+  };
+
   const derivedWinners = state.responses
     .filter(r => r.type === 'winner')
     .map(r => state.users.find(u => u.id === r.data.winnerId))
@@ -324,7 +339,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateUser, 
       saveResponse, 
       addWinner, 
-      clearWinners 
+      clearWinners,
+      clearAllResponses
     }}>
       {children}
     </AppContext.Provider>

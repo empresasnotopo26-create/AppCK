@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '../../store/AppContext';
-import { Users, FileText, CheckCircle2, TrendingUp, Clock } from 'lucide-react';
+import { Users, FileText, CheckCircle2, TrendingUp, Clock, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 
 export const Dashboard: React.FC = () => {
-  const { users, responses } = useAppContext();
+  const { users, responses, clearAllResponses } = useAppContext();
+  const [isClearing, setIsClearing] = useState(false);
 
   const totalUsers = users.length;
   
@@ -29,8 +30,33 @@ export const Dashboard: React.FC = () => {
 
   const recentUsers = [...users].reverse().slice(0, 5);
 
+  const handleClearData = async () => {
+    if (window.confirm("🚨 ATENÇÃO: Tem certeza que deseja APAGAR TODAS as respostas do sistema? Isso inclui Quiz, Pesquisas e Sorteios. \n\nOs participantes cadastrados NÃO serão apagados. Esta ação não pode ser desfeita.")) {
+      setIsClearing(true);
+      await clearAllResponses();
+      setIsClearing(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      
+      {/* Cabeçalho com Botão de Reset */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Visão Geral</h2>
+          <p className="text-slate-400 text-sm">Acompanhe as métricas da imersão em tempo real.</p>
+        </div>
+        <Button 
+          onClick={handleClearData} 
+          disabled={isClearing || totalResponses === 0}
+          variant="destructive" 
+          className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all shadow-sm"
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          {isClearing ? 'Apagando...' : 'Zerar Banco de Dados'}
+        </Button>
+      </div>
       
       {/* Cards de Métricas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
