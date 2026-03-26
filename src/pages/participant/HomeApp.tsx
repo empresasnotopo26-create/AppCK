@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
-import { ChevronRight, CheckCircle2, PlayCircle, Trophy, Download, FileText, Sparkles } from 'lucide-react';
+import { ChevronRight, CheckCircle2, PlayCircle, Trophy } from 'lucide-react';
 
 export const HomeApp: React.FC = () => {
   const { currentUser, responses } = useAppContext();
@@ -27,7 +27,7 @@ export const HomeApp: React.FC = () => {
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto">
       
       {/* Banner Sólido e Elegante (Dark + Neon) */}
       <div className="bg-black border border-orange-500/40 rounded-3xl p-8 sm:p-10 text-white shadow-[0_0_30px_rgba(255,85,0,0.15)] relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -82,7 +82,6 @@ export const HomeApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Lista de Atividades */}
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">
           <h2 className="text-2xl font-black text-white tracking-tight">Suas Atividades</h2>
@@ -135,40 +134,6 @@ export const HomeApp: React.FC = () => {
           })}
         </div>
       </div>
-
-      {/* Material Bônus / Download do PDF */}
-      <div className="pt-4 pb-4">
-        <div className="flex items-center justify-between px-2 mb-6">
-          <h2 className="text-2xl font-black text-white tracking-tight">Material Bônus</h2>
-          <Sparkles className="text-orange-500 drop-shadow-[0_0_10px_rgba(255,85,0,0.6)] w-6 h-6" />
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 hover:border-orange-500/50 transition-colors duration-300 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 shadow-lg group relative overflow-hidden">
-          {/* Efeito de brilho que passa ao passar o mouse */}
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-orange-500/5 to-orange-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-
-          <div className="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center flex-shrink-0 border border-orange-500/20 group-hover:bg-orange-500 group-hover:text-black text-orange-500 transition-colors">
-            <FileText className="w-8 h-8" />
-          </div>
-
-          <div className="flex-1 text-center sm:text-left z-10">
-            <h3 className="text-xl sm:text-2xl font-black text-white mb-2">Arsenal de Ferramentas IA</h3>
-            <p className="text-slate-400 text-sm sm:text-base font-medium leading-relaxed">
-              Baixe agora nosso catálogo exclusivo com as melhores Inteligências Artificiais do mercado, criteriosamente separadas para cada tipo de atividade do seu negócio.
-            </p>
-          </div>
-
-          <a
-            href="/guia-ia-ck-negocios.pdf"
-            download="Catálogo IA - CK Negócios.pdf"
-            className="w-full sm:w-auto px-8 py-4 bg-orange-500 hover:bg-orange-400 text-black font-black rounded-xl flex items-center justify-center gap-2 transition-all hover:shadow-[0_0_20px_rgba(255,85,0,0.4)] hover:-translate-y-1 flex-shrink-0 z-10"
-          >
-            <Download className="w-5 h-5" />
-            Baixar Catálogo
-          </a>
-        </div>
-      </div>
-
     </div>
   );
 };
