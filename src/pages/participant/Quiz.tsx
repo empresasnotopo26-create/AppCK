@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../store/AppContext';
 import { Button } from '@/components/ui/button';
 import { showSuccess } from '../../utils/toast';
 import { CheckCircle2, Loader2, Trophy } from 'lucide-react';
+import { supabase } from '../../integrations/supabase/client';
 
 export const Quiz: React.FC = () => {
   const [answers, setAnswers] = useState({ 
@@ -16,10 +17,17 @@ export const Quiz: React.FC = () => {
   
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
+  
+  const draftSignaled = useRef(false);
 
   // Carrega respostas anteriores (do banco) ou rascunho local
   useEffect(() => {
     if (!currentUser?.id) return;
+
+    // Verifica se já sinalizou rascunho
+    if (responses.some(r => r.userId === currentUser.id && r.type === 'quiz_draft')) {
+      draftSignaled.current = true;
+    }
 
     const previous = responses.find(r => r.userId === currentUser.id && r.type === 'quiz');
     
@@ -62,6 +70,16 @@ export const Quiz: React.FC = () => {
       // Salva no LocalStorage sempre que houver mudança
       if (currentUser?.id) {
         localStorage.setItem(`quiz_draft_${currentUser.id}`, JSON.stringify(newAnswers));
+        
+        // Sinaliza no banco que o usuário iniciou (para o gráfico "Em Andamento" do Admin)
+        if (!draftSignaled.current) {
+          draftSignaled.current = true;
+          supabase.from('responses').insert({
+            user_id: currentUser.id,
+            type: 'quiz_draft',
+            data: { started: true }
+          }).then();
+        }
       }
       
       return newAnswers;

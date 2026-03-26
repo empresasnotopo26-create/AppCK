@@ -12,6 +12,17 @@ export const AdminQuiz: React.FC = () => {
   const participants = users.filter(u => !u.isAdmin && u.isActive !== false);
   const quizResponses = responses.filter(r => r.type === 'quiz');
   
+  // Quem já finalizou
+  const finishedUserIds = quizResponses.map(r => r.userId);
+  
+  // Quem está em andamento (tem rascunho 'quiz_draft' sinalizado e ainda não finalizou)
+  // Utilizamos um Set para garantir que cada usuário conte apenas 1 vez
+  const inProgressUserIds = new Set(
+    responses
+      .filter(r => r.type === 'quiz_draft' && !finishedUserIds.includes(r.userId))
+      .map(r => r.userId)
+  );
+  
   const correctAnswers: Record<string, string> = {
     q1: 'NotebookLM do Google',
     q2: 'Criar imagens a partir de descrições em texto',
@@ -55,10 +66,9 @@ export const AdminQuiz: React.FC = () => {
   const averageScore = quizResponses.length > 0 ? Math.round(totalScore / quizResponses.length) : 0;
 
   // 2. Gráfico de Status (Pizza)
-  const finishedCount = quizResponses.length;
-  // O sistema não salva estado "em andamento" no BD atual, então será 0.
-  const inProgressCount = 0; 
-  const notStartedCount = Math.max(0, participants.length - finishedCount);
+  const finishedCount = finishedUserIds.length;
+  const inProgressCount = inProgressUserIds.size; 
+  const notStartedCount = Math.max(0, participants.length - finishedCount - inProgressCount);
 
   const pieData = [
     { name: 'Finalizaram', value: finishedCount, color: '#10b981' }, // emerald-500
