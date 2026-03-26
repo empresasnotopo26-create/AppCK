@@ -18,6 +18,8 @@ export const AdminQuiz: React.FC = () => {
     { key: 'q6', title: 'Gerar vídeos com IA' },
     { key: 'q7', title: 'Landing page via prompt' },
     { key: 'q8', title: 'Criar apps sem programar' },
+    { key: 'q9', title: 'Diferença entre IA e Automação' },
+    { key: 'q10', title: 'O que é "Alucinação" em IA' },
   ];
 
   // Helper para agrupar respostas
@@ -109,7 +111,7 @@ export const AdminQuiz: React.FC = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={9} className="h-32 text-center text-slate-500">
+                    <TableCell colSpan={11} className="h-32 text-center text-slate-500">
                       Nenhuma resposta encontrada.
                     </TableCell>
                   </TableRow>

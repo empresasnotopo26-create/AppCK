@@ -28,6 +28,8 @@ export interface QuizResponse extends BaseResponse {
     q6: string;
     q7: string;
     q8: string;
+    q9: string;
+    q10: string;
   };
 }
 
