@@ -30,7 +30,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner position="top-center" theme="dark" />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           {/* Rotas Públicas */}
           <Route path="/" element={<Navigate to="/cadastro" replace />} />
