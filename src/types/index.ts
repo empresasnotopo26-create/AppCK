@@ -39,6 +39,8 @@ export interface PesquisaResponse extends BaseResponse {
     revenue: string;
     biggestChallenge: string;
     aiDoubts: string;
+    morningRating?: number;
+    afternoonExpectation?: string;
   };
 }
 

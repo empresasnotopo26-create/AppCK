@@ -11,6 +11,9 @@ export const Pesquisa: React.FC = () => {
   const [revenue, setRevenue] = useState('');
   const [biggestChallenge, setBiggestChallenge] = useState('');
   const [aiDoubts, setAiDoubts] = useState('');
+  const [morningRating, setMorningRating] = useState<number | null>(null);
+  const [afternoonExpectation, setAfternoonExpectation] = useState('');
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alreadyResponded, setAlreadyResponded] = useState(false);
   
@@ -23,17 +26,25 @@ export const Pesquisa: React.FC = () => {
       setRevenue(previous.data.revenue);
       setBiggestChallenge(previous.data.biggestChallenge);
       setAiDoubts(previous.data.aiDoubts);
+      setMorningRating(previous.data.morningRating ?? null);
+      setAfternoonExpectation(previous.data.afternoonExpectation ?? '');
       setAlreadyResponded(true);
     }
   }, [responses, currentUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (alreadyResponded || !revenue || !biggestChallenge || !aiDoubts) return;
+    if (alreadyResponded || !isComplete) return;
     
     setIsSubmitting(true);
     try {
-      await saveResponse('pesquisa', { revenue, biggestChallenge, aiDoubts });
+      await saveResponse('pesquisa', { 
+        revenue, 
+        biggestChallenge, 
+        aiDoubts,
+        morningRating,
+        afternoonExpectation
+      });
       showSuccess('Pesquisa enviada com sucesso!');
       navigate('/app');
     } finally {
@@ -51,7 +62,11 @@ export const Pesquisa: React.FC = () => {
     'Acima de R$ 10 milhões'
   ];
 
-  const isComplete = revenue && biggestChallenge.trim() && aiDoubts.trim();
+  const isComplete = revenue && 
+    biggestChallenge.trim() && 
+    aiDoubts.trim() && 
+    morningRating !== null && 
+    afternoonExpectation.trim();
 
   return (
     <div className="animate-in fade-in duration-500 max-w-2xl mx-auto pb-8">
@@ -97,7 +112,7 @@ export const Pesquisa: React.FC = () => {
           <Label className="text-xl font-bold text-white block">Qual é hoje o maior desafio da sua empresa?</Label>
           <Textarea 
             placeholder="Descreva brevemente seu principal gargalo ou dificuldade..."
-            className={`min-h-[160px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner ${alreadyResponded ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`min-h-[140px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner ${alreadyResponded ? 'opacity-70 cursor-not-allowed' : ''}`}
             value={biggestChallenge}
             onChange={(e) => setBiggestChallenge(e.target.value)}
             readOnly={alreadyResponded}
@@ -109,9 +124,51 @@ export const Pesquisa: React.FC = () => {
           <Label className="text-xl font-bold text-white block">Quais são suas maiores dúvidas sobre IA neste momento?</Label>
           <Textarea 
             placeholder="O que você espera esclarecer ao longo desta imersão?"
-            className={`min-h-[160px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner ${alreadyResponded ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`min-h-[140px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner ${alreadyResponded ? 'opacity-70 cursor-not-allowed' : ''}`}
             value={aiDoubts}
             onChange={(e) => setAiDoubts(e.target.value)}
+            readOnly={alreadyResponded}
+          />
+        </div>
+
+        {/* Avaliação da Manhã */}
+        <div className="space-y-5">
+          <Label className="text-xl font-bold text-white block">O que achou do período da manhã?</Label>
+          <div className="flex justify-between items-center gap-1 sm:gap-3 mt-4 bg-slate-950 p-2 sm:p-4 rounded-[2rem] border border-slate-800">
+            {[0, 1, 2, 3, 4].map((num) => {
+              const isSelected = morningRating === num;
+              return (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => !alreadyResponded && setMorningRating(num)}
+                  className={`flex-1 h-14 sm:h-16 rounded-xl sm:rounded-2xl text-lg sm:text-xl font-black transition-all duration-300 ${
+                    isSelected 
+                      ? 'bg-orange-500 text-slate-950 shadow-[0_0_25px_rgba(249,115,22,0.5)] scale-110 border-orange-500 z-10' 
+                      : `bg-slate-900 text-slate-500 border-2 border-slate-800 ${
+                          alreadyResponded ? 'opacity-50 cursor-default' : 'hover:border-orange-500/50 hover:text-orange-500'
+                        }`
+                  }`}
+                >
+                  {num}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex justify-between text-xs font-bold text-slate-500 uppercase tracking-widest px-4 pt-1">
+            <span>Muito ruim</span>
+            <span>Muito bom</span>
+          </div>
+        </div>
+
+        {/* Expectativa da Tarde */}
+        <div className="space-y-5">
+          <Label className="text-xl font-bold text-white block">O que espera para a tarde?</Label>
+          <Textarea 
+            placeholder="Compartilhe o que você gostaria de ver ou aprender hoje à tarde..."
+            className={`min-h-[140px] resize-none border-2 border-slate-800 focus-visible:ring-0 focus-visible:border-orange-500 rounded-3xl text-base p-6 bg-slate-950 focus:bg-slate-900 text-white placeholder:text-slate-600 transition-all shadow-inner ${alreadyResponded ? 'opacity-70 cursor-not-allowed' : ''}`}
+            value={afternoonExpectation}
+            onChange={(e) => setAfternoonExpectation(e.target.value)}
             readOnly={alreadyResponded}
           />
         </div>

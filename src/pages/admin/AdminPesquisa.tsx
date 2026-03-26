@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { WordCloud } from '../../components/WordCloud';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Target, HelpCircle } from 'lucide-react';
+import { Target, HelpCircle, Sun } from 'lucide-react';
 
 export const AdminPesquisa: React.FC = () => {
   const { users, responses } = useAppContext();
@@ -188,6 +188,66 @@ export const AdminPesquisa: React.FC = () => {
                         </TableCell>
                         <TableCell className="text-slate-300 text-sm align-top pt-4 whitespace-pre-wrap leading-relaxed">
                           {p.data.aiDoubts}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="h-24 text-center text-slate-500">
+                      Nenhuma resposta encontrada.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Tabela 3: Avaliação Manhã & Expectativas */}
+      <Card className="bg-slate-900 border-slate-800 shadow-md">
+        <CardHeader className="border-b border-slate-800/50 pb-4">
+          <CardTitle className="text-slate-100 text-base flex items-center gap-2">
+            <Sun className="w-5 h-5 text-yellow-500" />
+            Detalhes: Avaliação da Manhã e Expectativas
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="rounded-md overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-slate-950/80">
+                <TableRow className="border-slate-800 hover:bg-slate-950">
+                  <TableHead className="text-slate-400 min-w-[200px] pl-6">Participante</TableHead>
+                  <TableHead className="text-slate-400 text-center min-w-[120px]">Nota Manhã</TableHead>
+                  <TableHead className="text-slate-400 min-w-[400px]">Expectativa para a Tarde</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pesquisas.length > 0 ? (
+                  pesquisas.map((p: any) => {
+                    const user = users.find(u => u.id === p.userId);
+                    return (
+                      <TableRow key={`expectativa-${p.id}`} className="border-slate-800 hover:bg-slate-800/50 transition-colors">
+                        <TableCell className="font-medium text-slate-300 align-top pt-4 pl-6">
+                          <div>{user?.name || 'Desconhecido'}</div>
+                          <div className="text-xs text-slate-500">{user?.email}</div>
+                        </TableCell>
+                        <TableCell className="text-center align-top pt-4">
+                          {p.data.morningRating !== undefined ? (
+                            <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm border ${
+                              p.data.morningRating >= 3 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
+                              p.data.morningRating === 2 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
+                              'bg-red-500/20 text-red-400 border-red-500/30'
+                            }`}>
+                              {p.data.morningRating}
+                            </span>
+                          ) : (
+                            <span className="text-slate-600">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-slate-300 text-sm align-top pt-4 whitespace-pre-wrap leading-relaxed">
+                          {p.data.afternoonExpectation || <span className="text-slate-600 italic">Sem resposta</span>}
                         </TableCell>
                       </TableRow>
                     );
