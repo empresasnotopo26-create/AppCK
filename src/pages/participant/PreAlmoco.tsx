@@ -69,7 +69,7 @@ export const PreAlmoco: React.FC = () => {
     <div className="animate-in fade-in duration-500 max-w-2xl mx-auto pb-8">
       <div className="mb-10 text-center sm:text-left">
         <h2 className="text-3xl font-black text-white tracking-tight">Diagnóstico: Manhã</h2>
-        <p className="text-slate-400 mt-2 text-lg font-medium">Avalie os pilares do seu negócio de 0 (Muito Ruim) a 5 (Muito Bom).</p>
+        <p className="text-slate-400 mt-2 text-lg font-medium">Avalie os pilares do seu negócio de 0 (Muito Ruim) a 4 (Muito Bom).</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-12">
@@ -81,7 +81,8 @@ export const PreAlmoco: React.FC = () => {
             </Label>
             
             <div className="flex justify-between items-center gap-1 sm:gap-3 mt-4 bg-slate-950 p-2 sm:p-4 rounded-[2rem] border border-slate-800">
-              {[0, 1, 2, 3, 4, 5].map((num) => {
+              {/* Array alterado para ir apenas de 0 a 4 */}
+              {[0, 1, 2, 3, 4].map((num) => {
                 const isSelected = scores[q.id] === num;
                 return (
                   <button
