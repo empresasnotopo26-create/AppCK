@@ -6,7 +6,10 @@ import { showSuccess } from '../../utils/toast';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 
 export const Quiz: React.FC = () => {
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '' });
+  const [answers, setAnswers] = useState({ 
+    q1: '', q2: '', q3: '', q4: '', 
+    q5: '', q6: '', q7: '', q8: '' 
+  });
   const [alreadyResponded, setAlreadyResponded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -16,7 +19,16 @@ export const Quiz: React.FC = () => {
   useEffect(() => {
     const previous = responses.find(r => r.userId === currentUser?.id && r.type === 'quiz');
     if (previous && previous.type === 'quiz') {
-      setAnswers(previous.data);
+      setAnswers({
+        q1: previous.data.q1 || '',
+        q2: previous.data.q2 || '',
+        q3: previous.data.q3 || '',
+        q4: previous.data.q4 || '',
+        q5: previous.data.q5 || '',
+        q6: previous.data.q6 || '',
+        q7: previous.data.q7 || '',
+        q8: previous.data.q8 || '',
+      });
       setAlreadyResponded(true);
     }
   }, [responses, currentUser]);
@@ -28,7 +40,7 @@ export const Quiz: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (alreadyResponded || !answers.q1 || !answers.q2 || !answers.q3 || !answers.q4) return;
+    if (alreadyResponded || Object.values(answers).some(val => !val)) return;
     
     setIsSubmitting(true);
     try {
@@ -43,23 +55,43 @@ export const Quiz: React.FC = () => {
   const questions = [
     {
       id: 'q1',
-      title: 'Você já usa Inteligência Artificial no seu dia a dia?',
-      options: ['Sim, diariamente', 'Às vezes', 'Raramente', 'Não utilizo']
+      title: 'Você precisa analisar um PDF de 200 páginas com relatórios da sua empresa. Qual ferramenta resolve isso melhor?',
+      options: ['ChatGPT', 'NotebookLM do Google', 'Excel', 'Google Docs']
     },
     {
       id: 'q2',
-      title: 'Qual destas áreas mais te interessa na Imersão?',
-      options: ['Vendas', 'Marketing', 'Operações', 'Atendimento']
+      title: 'O que ferramentas como Midjourney ou DALL·E permitem fazer?',
+      options: ['Criar imagens a partir de descrições em texto', 'Editar fotos já existentes com filtros', 'Produzir vídeos automaticamente', 'Criar apresentações completas']
     },
     {
       id: 'q3',
-      title: 'Você já testou alguma ferramenta de automação?',
-      options: ['Sim, domino', 'Testei o básico', 'Conheço de nome', 'Nunca testei']
+      title: 'Qual dessas situações representa um uso mais atual de IA nos negócios?',
+      options: ['Usar IA para responder clientes com contexto e agilidade', 'Usar IA para buscar informações no Google', 'Usar IA para organizar arquivos', 'Usar IA para editar documentos']
     },
     {
       id: 'q4',
-      title: 'Seu negócio já utiliza tecnologia para produtividade?',
-      options: ['Extensivamente', 'Algumas áreas', 'Muito pouco', 'Ainda não']
+      title: 'O que é um “prompt”?',
+      options: ['Um tipo de comando ou instrução que você dá para a IA', 'Um sistema interno da ferramenta', 'Um tipo de automação de IA', 'Um modelo de resposta pronto em uma IA']
+    },
+    {
+      id: 'q5',
+      title: 'O que a IA generativa faz na prática?',
+      options: ['Ajuda a organizar conteúdos existentes', 'Cria novos conteúdos como textos, imagens e ideias', 'Melhora a velocidade de sistemas', 'Armazena grandes volumes de dados']
+    },
+    {
+      id: 'q6',
+      title: 'Quais dessas plataformas são usadas para gerar vídeos com IA?',
+      options: ['Runway e veo3', 'Notion e Trello', 'Canva e chatgpt', 'Google Drive e stich']
+    },
+    {
+      id: 'q7',
+      title: 'Em qual dessas plataformas você consegue gerar uma landing page pronta usando apenas prompt?',
+      options: ['Lovable', 'gemini', 'sora', 'notebook lm']
+    },
+    {
+      id: 'q8',
+      title: 'Qual dessas plataformas permite criar apps com IA sem programar?',
+      options: ['Bubble', 'Base44', 'WordPress', 'Wix']
     }
   ];
 
@@ -73,7 +105,7 @@ export const Quiz: React.FC = () => {
       {/* Header Fixo de Progresso Elegante */}
       <div className="sticky top-0 md:-top-10 bg-slate-900/95 backdrop-blur-xl z-10 py-4 mb-8 border-b border-slate-800 mx-[-20px] px-[20px] sm:mx-0 sm:px-0">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Quiz Inicial</h2>
+          <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Quiz de Nivelamento</h2>
           <span className={`px-4 py-1.5 font-bold rounded-full text-sm border ${
             alreadyResponded 
               ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
@@ -91,7 +123,7 @@ export const Quiz: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-12">
         {questions.map((q, index) => (
-          <div key={q.id} className="space-y-5 animate-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 100}ms` }}>
+          <div key={q.id} className="space-y-5 animate-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 50}ms` }}>
             <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">
               <span className="text-orange-500 mr-2 drop-shadow-[0_0_5px_rgba(249,115,22,0.5)]">{index + 1}.</span>
               {q.title}
@@ -111,7 +143,7 @@ export const Quiz: React.FC = () => {
                           }`
                     }`}
                   >
-                    <span className="font-bold text-[15px]">{opt}</span>
+                    <span className="font-bold text-[14px] leading-snug pr-2">{opt}</span>
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                       isSelected ? 'border-slate-950 bg-orange-500' : 'border-slate-700 bg-slate-900'
                     }`}>
