@@ -17,9 +17,14 @@ export const Quiz: React.FC = () => {
   const { saveResponse, responses, currentUser } = useAppContext();
   const navigate = useNavigate();
 
+  // Carrega respostas anteriores (do banco) ou rascunho local
   useEffect(() => {
-    const previous = responses.find(r => r.userId === currentUser?.id && r.type === 'quiz');
+    if (!currentUser?.id) return;
+
+    const previous = responses.find(r => r.userId === currentUser.id && r.type === 'quiz');
+    
     if (previous && previous.type === 'quiz') {
+      // Já respondeu, puxa do banco
       setAnswers({
         q1: previous.data.q1 || '',
         q2: previous.data.q2 || '',
@@ -33,12 +38,34 @@ export const Quiz: React.FC = () => {
         q10: previous.data.q10 || '',
       });
       setAlreadyResponded(true);
+      // Se já respondeu, apaga qualquer rascunho antigo
+      localStorage.removeItem(`quiz_draft_${currentUser.id}`);
+    } else {
+      // Ainda não respondeu, tenta puxar o rascunho
+      const savedDraft = localStorage.getItem(`quiz_draft_${currentUser.id}`);
+      if (savedDraft) {
+        try {
+          setAnswers(JSON.parse(savedDraft));
+        } catch (e) {
+          console.error("Erro ao ler rascunho do quiz", e);
+        }
+      }
     }
   }, [responses, currentUser]);
 
   const handleSelect = (question: string, value: string) => {
     if (alreadyResponded) return;
-    setAnswers(prev => ({ ...prev, [question]: value }));
+    
+    setAnswers(prev => {
+      const newAnswers = { ...prev, [question]: value };
+      
+      // Salva no LocalStorage sempre que houver mudança
+      if (currentUser?.id) {
+        localStorage.setItem(`quiz_draft_${currentUser.id}`, JSON.stringify(newAnswers));
+      }
+      
+      return newAnswers;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,6 +75,12 @@ export const Quiz: React.FC = () => {
     setIsSubmitting(true);
     try {
       await saveResponse('quiz', answers);
+      
+      // Limpa o rascunho local após o envio com sucesso
+      if (currentUser?.id) {
+        localStorage.removeItem(`quiz_draft_${currentUser.id}`);
+      }
+      
       showSuccess('Quiz concluído com sucesso!');
       setAlreadyResponded(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
