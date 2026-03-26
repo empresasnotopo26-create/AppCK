@@ -10,19 +10,19 @@ export const AdminPesquisa: React.FC = () => {
   const pesquisas = responses.filter(r => r.type === 'pesquisa');
   
   // Agrupar faturamento
-  const revenueCount = pesquisas.reduce((acc, curr) => {
+  const revenueCount = pesquisas.reduce((acc, curr: any) => {
     const val = curr.data.revenue;
     acc[val] = (acc[val] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
   const revenueData = Object.entries(revenueCount).map(([name, value]) => ({ name, value }));
-  const COLORS = ['bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500', 'bg-emerald-500'];
+  const COLORS = ['bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500', 'bg-emerald-500', 'bg-cyan-500', 'bg-red-500'];
 
   const totalPesquisas = pesquisas.length || 1;
 
   // Coletar textos para nuvem de palavras
-  const desafiosWords = pesquisas.map(p => p.data.biggestChallenge).filter(Boolean);
+  const desafiosWords = pesquisas.map((p: any) => p.data.biggestChallenge).filter(Boolean);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -71,33 +71,37 @@ export const AdminPesquisa: React.FC = () => {
           <CardTitle className="text-slate-100">Respostas Detalhadas</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-slate-800 overflow-hidden">
+          <div className="rounded-md border border-slate-800 overflow-x-auto">
             <Table>
               <TableHeader className="bg-slate-950">
                 <TableRow className="border-slate-800 hover:bg-slate-950">
-                  <TableHead className="text-slate-400 w-[200px]">Participante</TableHead>
-                  <TableHead className="text-slate-400 w-[200px]">Faturamento</TableHead>
-                  <TableHead className="text-slate-400">Maior Desafio</TableHead>
-                  <TableHead className="text-slate-400">Dúvidas sobre IA</TableHead>
+                  <TableHead className="text-slate-400 min-w-[200px]">Participante</TableHead>
+                  <TableHead className="text-slate-400 min-w-[150px]">Faturamento</TableHead>
+                  <TableHead className="text-slate-400 min-w-[350px]">Maior Desafio</TableHead>
+                  <TableHead className="text-slate-400 min-w-[350px]">Dúvidas sobre IA</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pesquisas.length > 0 ? (
-                  pesquisas.map((p) => {
+                  pesquisas.map((p: any) => {
                     const user = users.find(u => u.id === p.userId);
                     return (
                       <TableRow key={p.id} className="border-slate-800 hover:bg-slate-800/50 transition-colors">
-                        <TableCell className="font-medium text-slate-300">
+                        <TableCell className="font-medium text-slate-300 align-top pt-4">
                           <div>{user?.name || 'Desconhecido'}</div>
                           <div className="text-xs text-slate-500">{user?.email}</div>
                         </TableCell>
-                        <TableCell className="text-slate-300">
-                           <span className="bg-blue-900/30 text-blue-400 px-2 py-1 rounded text-xs border border-blue-800/50">
+                        <TableCell className="text-slate-300 align-top pt-4">
+                           <span className="bg-blue-900/30 text-blue-400 px-2 py-1 rounded text-xs border border-blue-800/50 whitespace-nowrap">
                              {p.data.revenue}
                            </span>
                         </TableCell>
-                        <TableCell className="text-slate-400 text-sm">{p.data.biggestChallenge}</TableCell>
-                        <TableCell className="text-slate-400 text-sm">{p.data.aiDoubts}</TableCell>
+                        <TableCell className="text-slate-300 text-sm align-top pt-4 whitespace-pre-wrap leading-relaxed">
+                          {p.data.biggestChallenge}
+                        </TableCell>
+                        <TableCell className="text-slate-300 text-sm align-top pt-4 whitespace-pre-wrap leading-relaxed">
+                          {p.data.aiDoubts}
+                        </TableCell>
                       </TableRow>
                     );
                   })

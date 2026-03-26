@@ -42,7 +42,9 @@ export const Pesquisa: React.FC = () => {
   };
 
   const revenueOptions = [
-    'Até R$ 360 mil',
+    'Até R$ 50 mil',
+    'R$ 50 mil a R$ 100 mil',
+    'R$ 100 mil a R$ 360 mil',
     'R$ 360 mil a R$ 1 milhão',
     'R$ 1 milhão a R$ 5 milhões',
     'R$ 5 milhões a R$ 10 milhões',
