@@ -167,6 +167,19 @@ export const Cadastro: React.FC = () => {
           </Button>
         </form>
       </div>
+
+      {/* Seção dos Patrocinadores na tela de Login */}
+      <div className="mt-8 z-10 w-full max-w-md mx-auto text-center animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Patrocinadores</p>
+        <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4 flex justify-center items-center shadow-lg">
+          <img 
+            src="dyad-media://media/fluffy-bear-roll/.dyad/media/6756eb6850418f0e5e656d1e8a24caeb.png" 
+            alt="Patrocinadores" 
+            className="max-h-16 sm:max-h-20 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity"
+          />
+        </div>
+      </div>
+
     </div>
   );
 };
