@@ -20,6 +20,7 @@ const generateMockData = (): AppState => {
     currentUser: null,
     responses: [],
     winners: [],
+    isLoadingAuth: true, // Inicia como verdadeiro até confirmar a sessão
   };
 };
 
@@ -30,14 +31,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) fetchProfile(session.user.id, session.user.email);
+      if (session) {
+        fetchProfile(session.user.id, session.user.email, session.user.user_metadata?.name);
+      } else {
+        setState(prev => ({ ...prev, isLoadingAuth: false }));
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        fetchProfile(session.user.id, session.user.email);
+        fetchProfile(session.user.id, session.user.email, session.user.user_metadata?.name);
       } else {
-        setState(generateMockData());
+        setState(prev => ({ ...generateMockData(), isLoadingAuth: false }));
       }
     });
 
@@ -116,7 +121,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
     if (error) {
       console.error("Erro ao buscar usuários:", error);
-      showError("Não foi possível carregar os usuários.");
       return;
     }
     if (data) {
@@ -142,7 +146,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data, error } = await query;
     if (error) {
       console.error("Erro ao buscar respostas:", error);
-      showError("Não foi possível carregar as respostas.");
       return;
     }
 
@@ -159,14 +162,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const fetchProfile = async (userId: string, email?: string) => {
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+  const fetchProfile = async (userId: string, email?: string, metaName?: string) => {
+    let { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
     
+    // LÓGICA DE RETRY: Se a tabela atrasou na criação via trigger, tentamos de novo
+    if (!data && !error) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const retry = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+      data = retry.data;
+    }
+
     if (data) {
       if (data.is_active === false) {
         showError('Sua conta foi inativada pelo administrador.');
         await supabase.auth.signOut();
-        setState(prev => ({ ...prev, currentUser: null }));
+        setState(prev => ({ ...prev, currentUser: null, isLoadingAuth: false }));
         return;
       }
 
@@ -185,24 +195,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       const user: User = {
         id: data.id,
-        name: data.name || (isAdmin ? 'Administrador' : 'Usuário'),
+        name: data.name || metaName || (isAdmin ? 'Administrador' : 'Usuário'),
         email: data.email || email || '',
         createdAt: data.created_at || new Date().toISOString(),
         isAdmin: isAdmin,
         isActive: true
       };
       
-      setState(prev => ({ ...prev, currentUser: user }));
-    } else if (email === 'admin@ianapratica.com') {
+      setState(prev => ({ ...prev, currentUser: user, isLoadingAuth: false }));
+    } else {
+      // FALLBACK DE SEGURANÇA: Se o perfil ainda não existir no banco de dados
+      const isAdmin = email === 'admin@ianapratica.com';
       const user: User = {
         id: userId,
-        name: 'Administrador',
-        email: email,
+        name: metaName || (isAdmin ? 'Administrador' : 'Usuário'),
+        email: email || '',
         createdAt: new Date().toISOString(),
-        isAdmin: true,
+        isAdmin: isAdmin,
         isActive: true
       };
-      setState(prev => ({ ...prev, currentUser: user }));
+      setState(prev => ({ ...prev, currentUser: user, isLoadingAuth: false }));
     }
   };
 
@@ -218,6 +230,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (error.message.includes('already registered')) return { success: false, error: 'E-mail já cadastrado.' };
       return { success: false, error: error.message };
     }
+
+    if (!data.session && data.user) {
+       return { success: false, error: 'Acesso seguro ativado: Verifique sua caixa de e-mail para confirmar a conta antes de logar.' };
+    }
+
     return { success: true, isAdmin };
   };
 
@@ -228,7 +245,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       password: password || '12345678'
     });
 
-    if (error) return { success: false, error: 'Credenciais inválidas.' };
+    if (error) {
+      if (error.message.includes('Email not confirmed')) return { success: false, error: 'Por favor, confirme seu e-mail.' };
+      return { success: false, error: 'Credenciais inválidas.' };
+    }
     return { success: true, isAdmin };
   };
 
@@ -309,7 +329,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const clearAllResponses = async () => {
-    // Apaga todas as respostas do banco (filtro obrigatório not.is.null garante que delete tudo)
     const { error } = await supabase.from('responses').delete().not('id', 'is', null);
     if (error) {
       showError('Erro ao apagar os dados do banco.');

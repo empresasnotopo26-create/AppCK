@@ -1,11 +1,19 @@
 import React from 'react';
 import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
 import { useAppContext } from '../store/AppContext';
-import { BarChart3, Users, MessageSquare, ListTodo, Coffee, Star, Gift, LogOut } from 'lucide-react';
+import { BarChart3, Users, MessageSquare, ListTodo, Coffee, Star, Gift, LogOut, Loader2 } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
-  const { currentUser, logout } = useAppContext();
+  const { currentUser, logout, isLoadingAuth } = useAppContext();
   const location = useLocation();
+
+  if (isLoadingAuth) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col justify-center items-center">
+        <Loader2 className="w-12 h-12 text-orange-500 animate-spin mb-4" />
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return <Navigate to="/cadastro" />;
